@@ -1,0 +1,375 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="3.0" xmlns:edmx="http://schemas.microsoft.com/ado/2009/11/edmx">
+  <!-- EF Runtime content -->
+  <edmx:Runtime>
+    <!-- SSDL content -->
+    <edmx:StorageModels>
+    <Schema Namespace="dataModel.Store" Provider="System.Data.SQLite.EF6" ProviderManifestToken="data source=&quot;C:\Users\Conrhado Rauen\Documents\Visual Studio 2015\Projects\App\App\DataBase\data.sqlite&quot;;synchronous=Full" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
+        <EntityType Name="DnsConfig">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="integer" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="Host" Type="nvarchar" MaxLength="2147483647" />
+          <Property Name="Port" Type="integer" />
+          <Property Name="Address" Type="nvarchar" MaxLength="2147483647" />
+          <Property Name="Username" Type="nvarchar" MaxLength="2147483647" />
+          <Property Name="Password" Type="nvarchar" MaxLength="2147483647" />
+          <Property Name="IsUpdDisconnect" Type="bit" />
+          <Property Name="UpdateFrequency" Type="integer" />
+          <Property Name="DateAdd" Type="datetime" Nullable="false" />
+          <Property Name="DateUpdate" Type="datetime" />
+        </EntityType>
+        <EntityType Name="DnsLog">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="integer" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="DateTime" Type="nvarchar" MaxLength="2147483647" />
+          <Property Name="Description" Type="nvarchar" MaxLength="2147483647" />
+          <Property Name="DateAdd" Type="datetime" Nullable="false" />
+          <Property Name="DateUpdate" Type="datetime" />
+        </EntityType>
+        <EntityType Name="DomainList">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="integer" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="Domain" Type="nvarchar" MaxLength="2147483647" />
+          <Property Name="DateAdd" Type="datetime" Nullable="false" />
+          <Property Name="DateUpdate" Type="datetime" />
+        </EntityType>
+        <EntityType Name="FeedFilters">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="integer" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="IsActive" Type="bit" />
+          <Property Name="Filter" Type="nvarchar" MaxLength="2147483647" />
+          <Property Name="FilterNot" Type="nvarchar" MaxLength="2147483647" />
+          <Property Name="Feed" Type="integer" />
+          <Property Name="Label" Type="nvarchar" MaxLength="2147483647" />
+          <Property Name="DateAdd" Type="datetime" Nullable="false" />
+          <Property Name="DateUpdate" Type="datetime" />
+        </EntityType>
+        <EntityType Name="FeedItems">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="integer" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="Title" Type="nvarchar" MaxLength="2147483647" />
+          <Property Name="Link" Type="nvarchar" MaxLength="2147483647" />
+          <Property Name="Description" Type="nvarchar" MaxLength="2147483647" />
+          <Property Name="PublishDate" Type="nvarchar" MaxLength="2147483647" />
+          <Property Name="Magnet" Type="nvarchar" MaxLength="2147483647" />
+          <Property Name="FromFeed" Type="nvarchar" MaxLength="2147483647" />
+          <Property Name="IsDownloaded" Type="bit" />
+          <Property Name="DateAdd" Type="datetime" Nullable="false" />
+          <Property Name="DateUpdate" Type="datetime" />
+        </EntityType>
+        <EntityType Name="RssFeeds">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="integer" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="FeedUrl" Type="nvarchar" MaxLength="2147483647" />
+          <Property Name="FeedAlias" Type="nvarchar" MaxLength="2147483647" />
+          <Property Name="IsActive" Type="bit" />
+          <Property Name="DateAdd" Type="datetime" Nullable="false" />
+          <Property Name="DateUpdate" Type="datetime" />
+        </EntityType>
+        <EntityType Name="TorrentClient">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="integer" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="Address" Type="nvarchar" MaxLength="2147483647" />
+          <Property Name="Port" Type="integer" />
+          <Property Name="Username" Type="nvarchar" MaxLength="2147483647" />
+          <Property Name="Password" Type="nvarchar" MaxLength="2147483647" />
+          <Property Name="FullUri" Type="nvarchar" MaxLength="2147483647" />
+          <Property Name="RefreshRate" Type="integer" />
+          <Property Name="UpdateRate" Type="integer" />
+          <Property Name="IsForceDown" Type="bit" />
+          <Property Name="IsStop100" Type="bit" />
+          <Property Name="DateAdd" Type="datetime" Nullable="false" />
+          <Property Name="DateUpdate" Type="datetime" />
+        </EntityType>
+        <EntityType Name="UserConfig">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="integer" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="ScreenWidth" Type="integer" />
+          <Property Name="ScreenHeight" Type="integer" />
+          <Property Name="IsMaximized" Type="bit" />
+          <Property Name="RssFeedTreeWidth" Type="integer" />
+          <Property Name="DateAdd" Type="datetime" Nullable="false" />
+          <Property Name="DateUpdate" Type="datetime" />
+        </EntityType>
+        <EntityContainer Name="dataModelStoreContainer">
+          <EntitySet Name="DnsConfig" EntityType="Self.DnsConfig" store:Type="Tables" />
+          <EntitySet Name="DnsLog" EntityType="Self.DnsLog" store:Type="Tables" />
+          <EntitySet Name="DomainList" EntityType="Self.DomainList" store:Type="Tables" />
+          <EntitySet Name="FeedFilters" EntityType="Self.FeedFilters" store:Type="Tables" />
+          <EntitySet Name="FeedItems" EntityType="Self.FeedItems" store:Type="Tables" />
+          <EntitySet Name="RssFeeds" EntityType="Self.RssFeeds" store:Type="Tables" />
+          <EntitySet Name="TorrentClient" EntityType="Self.TorrentClient" store:Type="Tables" />
+          <EntitySet Name="UserConfig" EntityType="Self.UserConfig" store:Type="Tables" />
+        </EntityContainer>
+      </Schema></edmx:StorageModels>
+    <!-- CSDL content -->
+    <edmx:ConceptualModels>
+      <Schema Namespace="dataModel" Alias="Self" annotation:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
+        <EntityContainer Name="dataEntities" annotation:LazyLoadingEnabled="true">
+          <EntitySet Name="DnsConfig" EntityType="dataModel.DnsConfig" />
+          <EntitySet Name="DnsLog" EntityType="dataModel.DnsLog" />
+          <EntitySet Name="DomainList" EntityType="dataModel.DomainList" />
+          <EntitySet Name="FeedFilters" EntityType="dataModel.FeedFilters" />
+          <EntitySet Name="FeedItems" EntityType="dataModel.FeedItems" />
+          <EntitySet Name="RssFeeds" EntityType="dataModel.RssFeeds" />
+          <EntitySet Name="TorrentClient" EntityType="dataModel.TorrentClient" />
+          <EntitySet Name="UserConfig" EntityType="dataModel.UserConfig" />
+        </EntityContainer>
+        <EntityType Name="DnsConfig">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int64" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Host" Type="String" MaxLength="2147483647" FixedLength="false" Unicode="true" />
+          <Property Name="Port" Type="Int64" />
+          <Property Name="Address" Type="String" MaxLength="2147483647" FixedLength="false" Unicode="true" />
+          <Property Name="Username" Type="String" MaxLength="2147483647" FixedLength="false" Unicode="true" />
+          <Property Name="Password" Type="String" MaxLength="2147483647" FixedLength="false" Unicode="true" />
+          <Property Name="IsUpdDisconnect" Type="Boolean" />
+          <Property Name="UpdateFrequency" Type="Int64" />
+          <Property Name="DateAdd" Type="DateTime" Nullable="false" />
+          <Property Name="DateUpdate" Type="DateTime" />
+        </EntityType>
+        <EntityType Name="DnsLog">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int64" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="DateTime" Type="String" MaxLength="2147483647" FixedLength="false" Unicode="true" />
+          <Property Name="Description" Type="String" MaxLength="2147483647" FixedLength="false" Unicode="true" />
+          <Property Name="DateAdd" Type="DateTime" Nullable="false" />
+          <Property Name="DateUpdate" Type="DateTime" />
+        </EntityType>
+        <EntityType Name="DomainList">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int64" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Domain" Type="String" MaxLength="2147483647" FixedLength="false" Unicode="true" />
+          <Property Name="DateAdd" Type="DateTime" Nullable="false" />
+          <Property Name="DateUpdate" Type="DateTime" />
+        </EntityType>
+        <EntityType Name="FeedFilters">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int64" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="IsActive" Type="Boolean" />
+          <Property Name="Filter" Type="String" MaxLength="2147483647" FixedLength="false" Unicode="true" />
+          <Property Name="FilterNot" Type="String" MaxLength="2147483647" FixedLength="false" Unicode="true" />
+          <Property Name="Feed" Type="Int64" />
+          <Property Name="Label" Type="String" MaxLength="2147483647" FixedLength="false" Unicode="true" />
+          <Property Name="DateAdd" Type="DateTime" Nullable="false" />
+          <Property Name="DateUpdate" Type="DateTime" />
+        </EntityType>
+        <EntityType Name="FeedItems">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int64" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Title" Type="String" MaxLength="2147483647" FixedLength="false" Unicode="true" />
+          <Property Name="Link" Type="String" MaxLength="2147483647" FixedLength="false" Unicode="true" />
+          <Property Name="Description" Type="String" MaxLength="2147483647" FixedLength="false" Unicode="true" />
+          <Property Name="PublishDate" Type="String" MaxLength="2147483647" FixedLength="false" Unicode="true" />
+          <Property Name="Magnet" Type="String" MaxLength="2147483647" FixedLength="false" Unicode="true" />
+          <Property Name="FromFeed" Type="String" MaxLength="2147483647" FixedLength="false" Unicode="true" />
+          <Property Name="IsDownloaded" Type="Boolean" />
+          <Property Name="DateAdd" Type="DateTime" Nullable="false" />
+          <Property Name="DateUpdate" Type="DateTime" />
+        </EntityType>
+        <EntityType Name="RssFeeds">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int64" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="FeedUrl" Type="String" MaxLength="2147483647" FixedLength="false" Unicode="true" />
+          <Property Name="FeedAlias" Type="String" MaxLength="2147483647" FixedLength="false" Unicode="true" />
+          <Property Name="IsActive" Type="Boolean" />
+          <Property Name="DateAdd" Type="DateTime" Nullable="false" />
+          <Property Name="DateUpdate" Type="DateTime" />
+        </EntityType>
+        <EntityType Name="TorrentClient">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int64" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Address" Type="String" MaxLength="2147483647" FixedLength="false" Unicode="true" />
+          <Property Name="Port" Type="Int64" />
+          <Property Name="Username" Type="String" MaxLength="2147483647" FixedLength="false" Unicode="true" />
+          <Property Name="Password" Type="String" MaxLength="2147483647" FixedLength="false" Unicode="true" />
+          <Property Name="RefreshRate" Type="Int64" />
+          <Property Name="UpdateRate" Type="Int64" />
+          <Property Name="IsForceDown" Type="Boolean" />
+          <Property Name="IsStop100" Type="Boolean" />
+          <Property Name="DateAdd" Type="DateTime" Nullable="false" />
+          <Property Name="DateUpdate" Type="DateTime" />
+          <Property Name="FullUri" Type="String" MaxLength="2147483647" FixedLength="false" Unicode="true" />
+        </EntityType>
+        <EntityType Name="UserConfig">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int64" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="ScreenWidth" Type="Int64" />
+          <Property Name="ScreenHeight" Type="Int64" />
+          <Property Name="IsMaximized" Type="Boolean" />
+          <Property Name="RssFeedTreeWidth" Type="Int64" />
+          <Property Name="DateAdd" Type="DateTime" Nullable="false" />
+          <Property Name="DateUpdate" Type="DateTime" />
+        </EntityType>
+      </Schema>
+    </edmx:ConceptualModels>
+    <!-- C-S mapping content -->
+    <edmx:Mappings>
+      <Mapping Space="C-S" xmlns="http://schemas.microsoft.com/ado/2009/11/mapping/cs">
+        <EntityContainerMapping StorageEntityContainer="dataModelStoreContainer" CdmEntityContainer="dataEntities">
+          <EntitySetMapping Name="DnsConfig">
+            <EntityTypeMapping TypeName="dataModel.DnsConfig">
+              <MappingFragment StoreEntitySet="DnsConfig">
+                <ScalarProperty Name="DateUpdate" ColumnName="DateUpdate" />
+                <ScalarProperty Name="DateAdd" ColumnName="DateAdd" />
+                <ScalarProperty Name="UpdateFrequency" ColumnName="UpdateFrequency" />
+                <ScalarProperty Name="IsUpdDisconnect" ColumnName="IsUpdDisconnect" />
+                <ScalarProperty Name="Password" ColumnName="Password" />
+                <ScalarProperty Name="Username" ColumnName="Username" />
+                <ScalarProperty Name="Address" ColumnName="Address" />
+                <ScalarProperty Name="Port" ColumnName="Port" />
+                <ScalarProperty Name="Host" ColumnName="Host" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="DnsLog">
+            <EntityTypeMapping TypeName="dataModel.DnsLog">
+              <MappingFragment StoreEntitySet="DnsLog">
+                <ScalarProperty Name="DateUpdate" ColumnName="DateUpdate" />
+                <ScalarProperty Name="DateAdd" ColumnName="DateAdd" />
+                <ScalarProperty Name="Description" ColumnName="Description" />
+                <ScalarProperty Name="DateTime" ColumnName="DateTime" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="DomainList">
+            <EntityTypeMapping TypeName="dataModel.DomainList">
+              <MappingFragment StoreEntitySet="DomainList">
+                <ScalarProperty Name="DateUpdate" ColumnName="DateUpdate" />
+                <ScalarProperty Name="DateAdd" ColumnName="DateAdd" />
+                <ScalarProperty Name="Domain" ColumnName="Domain" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="FeedFilters">
+            <EntityTypeMapping TypeName="dataModel.FeedFilters">
+              <MappingFragment StoreEntitySet="FeedFilters">
+                <ScalarProperty Name="DateUpdate" ColumnName="DateUpdate" />
+                <ScalarProperty Name="DateAdd" ColumnName="DateAdd" />
+                <ScalarProperty Name="Label" ColumnName="Label" />
+                <ScalarProperty Name="Feed" ColumnName="Feed" />
+                <ScalarProperty Name="FilterNot" ColumnName="FilterNot" />
+                <ScalarProperty Name="Filter" ColumnName="Filter" />
+                <ScalarProperty Name="IsActive" ColumnName="IsActive" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="FeedItems">
+            <EntityTypeMapping TypeName="dataModel.FeedItems">
+              <MappingFragment StoreEntitySet="FeedItems">
+                <ScalarProperty Name="DateUpdate" ColumnName="DateUpdate" />
+                <ScalarProperty Name="DateAdd" ColumnName="DateAdd" />
+                <ScalarProperty Name="IsDownloaded" ColumnName="IsDownloaded" />
+                <ScalarProperty Name="FromFeed" ColumnName="FromFeed" />
+                <ScalarProperty Name="Magnet" ColumnName="Magnet" />
+                <ScalarProperty Name="PublishDate" ColumnName="PublishDate" />
+                <ScalarProperty Name="Description" ColumnName="Description" />
+                <ScalarProperty Name="Link" ColumnName="Link" />
+                <ScalarProperty Name="Title" ColumnName="Title" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="RssFeeds">
+            <EntityTypeMapping TypeName="dataModel.RssFeeds">
+              <MappingFragment StoreEntitySet="RssFeeds">
+                <ScalarProperty Name="DateUpdate" ColumnName="DateUpdate" />
+                <ScalarProperty Name="DateAdd" ColumnName="DateAdd" />
+                <ScalarProperty Name="IsActive" ColumnName="IsActive" />
+                <ScalarProperty Name="FeedAlias" ColumnName="FeedAlias" />
+                <ScalarProperty Name="FeedUrl" ColumnName="FeedUrl" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="TorrentClient">
+            <EntityTypeMapping TypeName="dataModel.TorrentClient">
+              <MappingFragment StoreEntitySet="TorrentClient">
+                <ScalarProperty Name="FullUri" ColumnName="FullUri" />
+                <ScalarProperty Name="DateUpdate" ColumnName="DateUpdate" />
+                <ScalarProperty Name="DateAdd" ColumnName="DateAdd" />
+                <ScalarProperty Name="IsStop100" ColumnName="IsStop100" />
+                <ScalarProperty Name="IsForceDown" ColumnName="IsForceDown" />
+                <ScalarProperty Name="UpdateRate" ColumnName="UpdateRate" />
+                <ScalarProperty Name="RefreshRate" ColumnName="RefreshRate" />
+                <ScalarProperty Name="Password" ColumnName="Password" />
+                <ScalarProperty Name="Username" ColumnName="Username" />
+                <ScalarProperty Name="Port" ColumnName="Port" />
+                <ScalarProperty Name="Address" ColumnName="Address" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="UserConfig">
+            <EntityTypeMapping TypeName="dataModel.UserConfig">
+              <MappingFragment StoreEntitySet="UserConfig">
+                <ScalarProperty Name="DateUpdate" ColumnName="DateUpdate" />
+                <ScalarProperty Name="DateAdd" ColumnName="DateAdd" />
+                <ScalarProperty Name="RssFeedTreeWidth" ColumnName="RssFeedTreeWidth" />
+                <ScalarProperty Name="IsMaximized" ColumnName="IsMaximized" />
+                <ScalarProperty Name="ScreenHeight" ColumnName="ScreenHeight" />
+                <ScalarProperty Name="ScreenWidth" ColumnName="ScreenWidth" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+        </EntityContainerMapping>
+      </Mapping>
+    </edmx:Mappings>
+  </edmx:Runtime>
+  <!-- EF Designer content (DO NOT EDIT MANUALLY BELOW HERE) -->
+  <Designer xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
+    <Connection>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="MetadataArtifactProcessing" Value="EmbedInOutputAssembly" />
+      </DesignerInfoPropertySet>
+    </Connection>
+    <Options>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="ValidateOnBuild" Value="true" />
+        <DesignerProperty Name="EnablePluralization" Value="false" />
+        <DesignerProperty Name="IncludeForeignKeysInModel" Value="true" />
+        <DesignerProperty Name="UseLegacyProvider" Value="false" />
+        <DesignerProperty Name="CodeGenerationStrategy" Value="None" />
+      </DesignerInfoPropertySet>
+    </Options>
+    <!-- Diagram content (shape and connector positions) -->
+    <Diagrams></Diagrams>
+  </Designer>
+</edmx:Edmx>
