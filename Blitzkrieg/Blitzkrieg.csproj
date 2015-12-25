@@ -181,7 +181,9 @@
     <EmbeddedResource Include="Views\frmAddFeed.resx">
       <DependentUpon>frmAddFeed.cs</DependentUpon>
     </EmbeddedResource>
-    <None Include="DataBase\data.sqlite" />
+    <None Include="DataBase\data.sqlite">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <EntityDeploy Include="DataBase\Database.edmx">
       <Generator>EntityModelCodeGenerator</Generator>
       <LastGenOutput>Database.Designer.cs</LastGenOutput>
