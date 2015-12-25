@@ -21,5 +21,6 @@ namespace Blitzkrieg.DataBase
         public Nullable<long> RssFeedTreeWidth { get; set; }
         public System.DateTime DateAdd { get; set; }
         public Nullable<System.DateTime> DateUpdate { get; set; }
+        public string Password { get; set; }
     }
 }

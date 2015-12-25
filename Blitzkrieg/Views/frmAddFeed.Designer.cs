@@ -60,7 +60,7 @@
             // chkIsActive
             // 
             this.chkIsActive.AutoSize = true;
-            this.chkIsActive.Location = new System.Drawing.Point(15, 80);
+            this.chkIsActive.Location = new System.Drawing.Point(15, 84);
             this.chkIsActive.Name = "chkIsActive";
             this.chkIsActive.Size = new System.Drawing.Size(83, 17);
             this.chkIsActive.TabIndex = 3;
@@ -69,7 +69,7 @@
             // 
             // btnEditFeedSave
             // 
-            this.btnEditFeedSave.Location = new System.Drawing.Point(309, 134);
+            this.btnEditFeedSave.Location = new System.Drawing.Point(251, 80);
             this.btnEditFeedSave.Name = "btnEditFeedSave";
             this.btnEditFeedSave.Size = new System.Drawing.Size(75, 23);
             this.btnEditFeedSave.TabIndex = 4;
@@ -99,7 +99,7 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(396, 169);
+            this.ClientSize = new System.Drawing.Size(338, 116);
             this.Controls.Add(this.txtAlias);
             this.Controls.Add(this.txtAddress);
             this.Controls.Add(this.btnEditFeedSave);
@@ -107,9 +107,9 @@
             this.Controls.Add(this.label2);
             this.Controls.Add(this.label1);
             this.MaximizeBox = false;
-            this.MaximumSize = new System.Drawing.Size(412, 207);
+            this.MaximumSize = new System.Drawing.Size(354, 154);
             this.MinimizeBox = false;
-            this.MinimumSize = new System.Drawing.Size(412, 207);
+            this.MinimumSize = new System.Drawing.Size(354, 154);
             this.Name = "frmAddFeed";
             this.SizeGripStyle = System.Windows.Forms.SizeGripStyle.Hide;
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;

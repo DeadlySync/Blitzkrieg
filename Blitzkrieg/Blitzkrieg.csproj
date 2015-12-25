@@ -112,6 +112,8 @@
     <Compile Include="Connection\DownloadFeed.cs" />
     <Compile Include="Connection\Post.cs" />
     <Compile Include="Connection\ReadFeed.cs" />
+    <Compile Include="Controllers\DatabaseController.cs" />
+    <Compile Include="Controllers\PasswordController.cs" />
     <Compile Include="DataBase\Database.Context.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
@@ -165,6 +167,12 @@
     <Compile Include="Views\frmAddFeed.Designer.cs">
       <DependentUpon>frmAddFeed.cs</DependentUpon>
     </Compile>
+    <Compile Include="Views\frmFirstRun.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Views\frmFirstRun.Designer.cs">
+      <DependentUpon>frmFirstRun.cs</DependentUpon>
+    </Compile>
     <EmbeddedResource Include="frmMain.resx">
       <DependentUpon>frmMain.cs</DependentUpon>
     </EmbeddedResource>
@@ -180,6 +188,9 @@
     </Compile>
     <EmbeddedResource Include="Views\frmAddFeed.resx">
       <DependentUpon>frmAddFeed.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Views\frmFirstRun.resx">
+      <DependentUpon>frmFirstRun.cs</DependentUpon>
     </EmbeddedResource>
     <None Include="DataBase\data.sqlite">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>

@@ -20,5 +20,6 @@ namespace Blitzkrieg.DataBase
         public Nullable<bool> IsActive { get; set; }
         public System.DateTime DateAdd { get; set; }
         public Nullable<System.DateTime> DateUpdate { get; set; }
+        public Nullable<long> FeedPriority { get; set; }
     }
 }

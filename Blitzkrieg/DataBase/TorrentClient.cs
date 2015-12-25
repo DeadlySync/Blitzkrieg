@@ -19,12 +19,12 @@ namespace Blitzkrieg.DataBase
         public Nullable<long> Port { get; set; }
         public string Username { get; set; }
         public string Password { get; set; }
+        public string FullUri { get; set; }
         public Nullable<long> RefreshRate { get; set; }
         public Nullable<long> UpdateRate { get; set; }
         public Nullable<bool> IsForceDown { get; set; }
         public Nullable<bool> IsStop100 { get; set; }
         public System.DateTime DateAdd { get; set; }
         public Nullable<System.DateTime> DateUpdate { get; set; }
-        public string FullUri { get; set; }
     }
 }

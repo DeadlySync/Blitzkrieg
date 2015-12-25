@@ -4,7 +4,7 @@
   <edmx:Runtime>
     <!-- SSDL content -->
     <edmx:StorageModels>
-    <Schema Namespace="dataModel.Store" Provider="System.Data.SQLite.EF6" ProviderManifestToken="data source=&quot;C:\Users\Conrhado Rauen\Documents\Visual Studio 2015\Projects\App\App\DataBase\data.sqlite&quot;;synchronous=Full" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
+    <Schema Namespace="dataModel.Store" Provider="System.Data.SQLite.EF6" ProviderManifestToken="data source=J:\Projects\Blitzkrieg\Blitzkrieg\DataBase\data.sqlite" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
         <EntityType Name="DnsConfig">
           <Key>
             <PropertyRef Name="Id" />
@@ -75,6 +75,7 @@
           <Property Name="FeedUrl" Type="nvarchar" MaxLength="2147483647" />
           <Property Name="FeedAlias" Type="nvarchar" MaxLength="2147483647" />
           <Property Name="IsActive" Type="bit" />
+          <Property Name="FeedPriority" Type="integer" />
           <Property Name="DateAdd" Type="datetime" Nullable="false" />
           <Property Name="DateUpdate" Type="datetime" />
         </EntityType>
@@ -104,6 +105,7 @@
           <Property Name="ScreenHeight" Type="integer" />
           <Property Name="IsMaximized" Type="bit" />
           <Property Name="RssFeedTreeWidth" Type="integer" />
+          <Property Name="Password" Type="nvarchar" MaxLength="2147483647" />
           <Property Name="DateAdd" Type="datetime" Nullable="false" />
           <Property Name="DateUpdate" Type="datetime" />
         </EntityType>
@@ -121,16 +123,6 @@
     <!-- CSDL content -->
     <edmx:ConceptualModels>
       <Schema Namespace="dataModel" Alias="Self" annotation:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
-        <EntityContainer Name="dataEntities" annotation:LazyLoadingEnabled="true">
-          <EntitySet Name="DnsConfig" EntityType="dataModel.DnsConfig" />
-          <EntitySet Name="DnsLog" EntityType="dataModel.DnsLog" />
-          <EntitySet Name="DomainList" EntityType="dataModel.DomainList" />
-          <EntitySet Name="FeedFilters" EntityType="dataModel.FeedFilters" />
-          <EntitySet Name="FeedItems" EntityType="dataModel.FeedItems" />
-          <EntitySet Name="RssFeeds" EntityType="dataModel.RssFeeds" />
-          <EntitySet Name="TorrentClient" EntityType="dataModel.TorrentClient" />
-          <EntitySet Name="UserConfig" EntityType="dataModel.UserConfig" />
-        </EntityContainer>
         <EntityType Name="DnsConfig">
           <Key>
             <PropertyRef Name="Id" />
@@ -203,6 +195,7 @@
           <Property Name="IsActive" Type="Boolean" />
           <Property Name="DateAdd" Type="DateTime" Nullable="false" />
           <Property Name="DateUpdate" Type="DateTime" />
+          <Property Name="FeedPriority" Type="Int64" />
         </EntityType>
         <EntityType Name="TorrentClient">
           <Key>
@@ -213,13 +206,13 @@
           <Property Name="Port" Type="Int64" />
           <Property Name="Username" Type="String" MaxLength="2147483647" FixedLength="false" Unicode="true" />
           <Property Name="Password" Type="String" MaxLength="2147483647" FixedLength="false" Unicode="true" />
+          <Property Name="FullUri" Type="String" MaxLength="2147483647" FixedLength="false" Unicode="true" />
           <Property Name="RefreshRate" Type="Int64" />
           <Property Name="UpdateRate" Type="Int64" />
           <Property Name="IsForceDown" Type="Boolean" />
           <Property Name="IsStop100" Type="Boolean" />
           <Property Name="DateAdd" Type="DateTime" Nullable="false" />
           <Property Name="DateUpdate" Type="DateTime" />
-          <Property Name="FullUri" Type="String" MaxLength="2147483647" FixedLength="false" Unicode="true" />
         </EntityType>
         <EntityType Name="UserConfig">
           <Key>
@@ -232,7 +225,18 @@
           <Property Name="RssFeedTreeWidth" Type="Int64" />
           <Property Name="DateAdd" Type="DateTime" Nullable="false" />
           <Property Name="DateUpdate" Type="DateTime" />
+          <Property Name="Password" Type="String" MaxLength="2147483647" FixedLength="false" Unicode="true" />
         </EntityType>
+        <EntityContainer Name="dataEntities" annotation:LazyLoadingEnabled="true">
+          <EntitySet Name="DnsConfig" EntityType="Self.DnsConfig" />
+          <EntitySet Name="DnsLog" EntityType="Self.DnsLog" />
+          <EntitySet Name="DomainList" EntityType="Self.DomainList" />
+          <EntitySet Name="FeedFilters" EntityType="Self.FeedFilters" />
+          <EntitySet Name="FeedItems" EntityType="Self.FeedItems" />
+          <EntitySet Name="RssFeeds" EntityType="Self.RssFeeds" />
+          <EntitySet Name="TorrentClient" EntityType="Self.TorrentClient" />
+          <EntitySet Name="UserConfig" EntityType="Self.UserConfig" />
+        </EntityContainer>
       </Schema>
     </edmx:ConceptualModels>
     <!-- C-S mapping content -->
@@ -242,110 +246,112 @@
           <EntitySetMapping Name="DnsConfig">
             <EntityTypeMapping TypeName="dataModel.DnsConfig">
               <MappingFragment StoreEntitySet="DnsConfig">
-                <ScalarProperty Name="DateUpdate" ColumnName="DateUpdate" />
-                <ScalarProperty Name="DateAdd" ColumnName="DateAdd" />
-                <ScalarProperty Name="UpdateFrequency" ColumnName="UpdateFrequency" />
-                <ScalarProperty Name="IsUpdDisconnect" ColumnName="IsUpdDisconnect" />
-                <ScalarProperty Name="Password" ColumnName="Password" />
-                <ScalarProperty Name="Username" ColumnName="Username" />
-                <ScalarProperty Name="Address" ColumnName="Address" />
-                <ScalarProperty Name="Port" ColumnName="Port" />
-                <ScalarProperty Name="Host" ColumnName="Host" />
                 <ScalarProperty Name="Id" ColumnName="Id" />
+                <ScalarProperty Name="Host" ColumnName="Host" />
+                <ScalarProperty Name="Port" ColumnName="Port" />
+                <ScalarProperty Name="Address" ColumnName="Address" />
+                <ScalarProperty Name="Username" ColumnName="Username" />
+                <ScalarProperty Name="Password" ColumnName="Password" />
+                <ScalarProperty Name="IsUpdDisconnect" ColumnName="IsUpdDisconnect" />
+                <ScalarProperty Name="UpdateFrequency" ColumnName="UpdateFrequency" />
+                <ScalarProperty Name="DateAdd" ColumnName="DateAdd" />
+                <ScalarProperty Name="DateUpdate" ColumnName="DateUpdate" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
           <EntitySetMapping Name="DnsLog">
             <EntityTypeMapping TypeName="dataModel.DnsLog">
               <MappingFragment StoreEntitySet="DnsLog">
-                <ScalarProperty Name="DateUpdate" ColumnName="DateUpdate" />
-                <ScalarProperty Name="DateAdd" ColumnName="DateAdd" />
-                <ScalarProperty Name="Description" ColumnName="Description" />
-                <ScalarProperty Name="DateTime" ColumnName="DateTime" />
                 <ScalarProperty Name="Id" ColumnName="Id" />
+                <ScalarProperty Name="DateTime" ColumnName="DateTime" />
+                <ScalarProperty Name="Description" ColumnName="Description" />
+                <ScalarProperty Name="DateAdd" ColumnName="DateAdd" />
+                <ScalarProperty Name="DateUpdate" ColumnName="DateUpdate" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
           <EntitySetMapping Name="DomainList">
             <EntityTypeMapping TypeName="dataModel.DomainList">
               <MappingFragment StoreEntitySet="DomainList">
-                <ScalarProperty Name="DateUpdate" ColumnName="DateUpdate" />
-                <ScalarProperty Name="DateAdd" ColumnName="DateAdd" />
-                <ScalarProperty Name="Domain" ColumnName="Domain" />
                 <ScalarProperty Name="Id" ColumnName="Id" />
+                <ScalarProperty Name="Domain" ColumnName="Domain" />
+                <ScalarProperty Name="DateAdd" ColumnName="DateAdd" />
+                <ScalarProperty Name="DateUpdate" ColumnName="DateUpdate" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
           <EntitySetMapping Name="FeedFilters">
             <EntityTypeMapping TypeName="dataModel.FeedFilters">
               <MappingFragment StoreEntitySet="FeedFilters">
-                <ScalarProperty Name="DateUpdate" ColumnName="DateUpdate" />
-                <ScalarProperty Name="DateAdd" ColumnName="DateAdd" />
-                <ScalarProperty Name="Label" ColumnName="Label" />
-                <ScalarProperty Name="Feed" ColumnName="Feed" />
-                <ScalarProperty Name="FilterNot" ColumnName="FilterNot" />
-                <ScalarProperty Name="Filter" ColumnName="Filter" />
-                <ScalarProperty Name="IsActive" ColumnName="IsActive" />
                 <ScalarProperty Name="Id" ColumnName="Id" />
+                <ScalarProperty Name="IsActive" ColumnName="IsActive" />
+                <ScalarProperty Name="Filter" ColumnName="Filter" />
+                <ScalarProperty Name="FilterNot" ColumnName="FilterNot" />
+                <ScalarProperty Name="Feed" ColumnName="Feed" />
+                <ScalarProperty Name="Label" ColumnName="Label" />
+                <ScalarProperty Name="DateAdd" ColumnName="DateAdd" />
+                <ScalarProperty Name="DateUpdate" ColumnName="DateUpdate" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
           <EntitySetMapping Name="FeedItems">
             <EntityTypeMapping TypeName="dataModel.FeedItems">
               <MappingFragment StoreEntitySet="FeedItems">
-                <ScalarProperty Name="DateUpdate" ColumnName="DateUpdate" />
-                <ScalarProperty Name="DateAdd" ColumnName="DateAdd" />
-                <ScalarProperty Name="IsDownloaded" ColumnName="IsDownloaded" />
-                <ScalarProperty Name="FromFeed" ColumnName="FromFeed" />
-                <ScalarProperty Name="Magnet" ColumnName="Magnet" />
-                <ScalarProperty Name="PublishDate" ColumnName="PublishDate" />
-                <ScalarProperty Name="Description" ColumnName="Description" />
-                <ScalarProperty Name="Link" ColumnName="Link" />
-                <ScalarProperty Name="Title" ColumnName="Title" />
                 <ScalarProperty Name="Id" ColumnName="Id" />
+                <ScalarProperty Name="Title" ColumnName="Title" />
+                <ScalarProperty Name="Link" ColumnName="Link" />
+                <ScalarProperty Name="Description" ColumnName="Description" />
+                <ScalarProperty Name="PublishDate" ColumnName="PublishDate" />
+                <ScalarProperty Name="Magnet" ColumnName="Magnet" />
+                <ScalarProperty Name="FromFeed" ColumnName="FromFeed" />
+                <ScalarProperty Name="IsDownloaded" ColumnName="IsDownloaded" />
+                <ScalarProperty Name="DateAdd" ColumnName="DateAdd" />
+                <ScalarProperty Name="DateUpdate" ColumnName="DateUpdate" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
           <EntitySetMapping Name="RssFeeds">
             <EntityTypeMapping TypeName="dataModel.RssFeeds">
               <MappingFragment StoreEntitySet="RssFeeds">
-                <ScalarProperty Name="DateUpdate" ColumnName="DateUpdate" />
-                <ScalarProperty Name="DateAdd" ColumnName="DateAdd" />
-                <ScalarProperty Name="IsActive" ColumnName="IsActive" />
-                <ScalarProperty Name="FeedAlias" ColumnName="FeedAlias" />
-                <ScalarProperty Name="FeedUrl" ColumnName="FeedUrl" />
+                <ScalarProperty Name="FeedPriority" ColumnName="FeedPriority" />
                 <ScalarProperty Name="Id" ColumnName="Id" />
+                <ScalarProperty Name="FeedUrl" ColumnName="FeedUrl" />
+                <ScalarProperty Name="FeedAlias" ColumnName="FeedAlias" />
+                <ScalarProperty Name="IsActive" ColumnName="IsActive" />
+                <ScalarProperty Name="DateAdd" ColumnName="DateAdd" />
+                <ScalarProperty Name="DateUpdate" ColumnName="DateUpdate" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
           <EntitySetMapping Name="TorrentClient">
             <EntityTypeMapping TypeName="dataModel.TorrentClient">
               <MappingFragment StoreEntitySet="TorrentClient">
-                <ScalarProperty Name="FullUri" ColumnName="FullUri" />
-                <ScalarProperty Name="DateUpdate" ColumnName="DateUpdate" />
-                <ScalarProperty Name="DateAdd" ColumnName="DateAdd" />
-                <ScalarProperty Name="IsStop100" ColumnName="IsStop100" />
-                <ScalarProperty Name="IsForceDown" ColumnName="IsForceDown" />
-                <ScalarProperty Name="UpdateRate" ColumnName="UpdateRate" />
-                <ScalarProperty Name="RefreshRate" ColumnName="RefreshRate" />
-                <ScalarProperty Name="Password" ColumnName="Password" />
-                <ScalarProperty Name="Username" ColumnName="Username" />
-                <ScalarProperty Name="Port" ColumnName="Port" />
-                <ScalarProperty Name="Address" ColumnName="Address" />
                 <ScalarProperty Name="Id" ColumnName="Id" />
+                <ScalarProperty Name="Address" ColumnName="Address" />
+                <ScalarProperty Name="Port" ColumnName="Port" />
+                <ScalarProperty Name="Username" ColumnName="Username" />
+                <ScalarProperty Name="Password" ColumnName="Password" />
+                <ScalarProperty Name="FullUri" ColumnName="FullUri" />
+                <ScalarProperty Name="RefreshRate" ColumnName="RefreshRate" />
+                <ScalarProperty Name="UpdateRate" ColumnName="UpdateRate" />
+                <ScalarProperty Name="IsForceDown" ColumnName="IsForceDown" />
+                <ScalarProperty Name="IsStop100" ColumnName="IsStop100" />
+                <ScalarProperty Name="DateAdd" ColumnName="DateAdd" />
+                <ScalarProperty Name="DateUpdate" ColumnName="DateUpdate" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
           <EntitySetMapping Name="UserConfig">
             <EntityTypeMapping TypeName="dataModel.UserConfig">
               <MappingFragment StoreEntitySet="UserConfig">
-                <ScalarProperty Name="DateUpdate" ColumnName="DateUpdate" />
-                <ScalarProperty Name="DateAdd" ColumnName="DateAdd" />
-                <ScalarProperty Name="RssFeedTreeWidth" ColumnName="RssFeedTreeWidth" />
-                <ScalarProperty Name="IsMaximized" ColumnName="IsMaximized" />
-                <ScalarProperty Name="ScreenHeight" ColumnName="ScreenHeight" />
-                <ScalarProperty Name="ScreenWidth" ColumnName="ScreenWidth" />
+                <ScalarProperty Name="Password" ColumnName="Password" />
                 <ScalarProperty Name="Id" ColumnName="Id" />
+                <ScalarProperty Name="ScreenWidth" ColumnName="ScreenWidth" />
+                <ScalarProperty Name="ScreenHeight" ColumnName="ScreenHeight" />
+                <ScalarProperty Name="IsMaximized" ColumnName="IsMaximized" />
+                <ScalarProperty Name="RssFeedTreeWidth" ColumnName="RssFeedTreeWidth" />
+                <ScalarProperty Name="DateAdd" ColumnName="DateAdd" />
+                <ScalarProperty Name="DateUpdate" ColumnName="DateUpdate" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>

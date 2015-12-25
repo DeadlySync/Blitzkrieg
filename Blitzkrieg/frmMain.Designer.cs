@@ -1,4 +1,4 @@
-﻿namespace App
+﻿namespace Blitzkrieg
 {
     partial class frmMain
     {
@@ -147,7 +147,7 @@
             this.RssGroup.Location = new System.Drawing.Point(3, 3);
             this.RssGroup.Name = "RssGroup";
             this.RssGroup.Size = new System.Drawing.Size(865, 506);
-            this.RssGroup.TabIndex = 1;
+            this.RssGroup.TabIndex = 0;
             this.RssGroup.TabStop = false;
             this.RssGroup.Text = "RSS Feed Configuration";
             // 
@@ -157,7 +157,7 @@
             this.btnAddFeed.Location = new System.Drawing.Point(7, 480);
             this.btnAddFeed.Name = "btnAddFeed";
             this.btnAddFeed.Size = new System.Drawing.Size(75, 23);
-            this.btnAddFeed.TabIndex = 5;
+            this.btnAddFeed.TabIndex = 0;
             this.btnAddFeed.Text = "Add Feed";
             this.btnAddFeed.UseVisualStyleBackColor = true;
             this.btnAddFeed.Click += new System.EventHandler(this.btnAddFeed_Click);
@@ -236,7 +236,7 @@
             this.btnAddFilter.Location = new System.Drawing.Point(578, 220);
             this.btnAddFilter.Name = "btnAddFilter";
             this.btnAddFilter.Size = new System.Drawing.Size(75, 23);
-            this.btnAddFilter.TabIndex = 4;
+            this.btnAddFilter.TabIndex = 3;
             this.btnAddFilter.Text = "Add Filter";
             this.btnAddFilter.UseVisualStyleBackColor = true;
             // 
@@ -246,7 +246,7 @@
             this.btnDelFilter.Location = new System.Drawing.Point(497, 220);
             this.btnDelFilter.Name = "btnDelFilter";
             this.btnDelFilter.Size = new System.Drawing.Size(75, 23);
-            this.btnDelFilter.TabIndex = 3;
+            this.btnDelFilter.TabIndex = 2;
             this.btnDelFilter.Text = "Delete Filter";
             this.btnDelFilter.UseVisualStyleBackColor = true;
             // 
@@ -256,7 +256,7 @@
             this.btnCheckNone.Location = new System.Drawing.Point(85, 220);
             this.btnCheckNone.Name = "btnCheckNone";
             this.btnCheckNone.Size = new System.Drawing.Size(75, 23);
-            this.btnCheckNone.TabIndex = 2;
+            this.btnCheckNone.TabIndex = 1;
             this.btnCheckNone.Text = "Uncheck All";
             this.btnCheckNone.UseVisualStyleBackColor = true;
             // 
@@ -266,7 +266,7 @@
             this.btnCheckAll.Location = new System.Drawing.Point(4, 220);
             this.btnCheckAll.Name = "btnCheckAll";
             this.btnCheckAll.Size = new System.Drawing.Size(75, 23);
-            this.btnCheckAll.TabIndex = 1;
+            this.btnCheckAll.TabIndex = 0;
             this.btnCheckAll.Text = "Check All";
             this.btnCheckAll.UseVisualStyleBackColor = true;
             // 
@@ -279,7 +279,7 @@
             this.RssFilterList.Location = new System.Drawing.Point(0, 3);
             this.RssFilterList.Name = "RssFilterList";
             this.RssFilterList.Size = new System.Drawing.Size(656, 214);
-            this.RssFilterList.TabIndex = 0;
+            this.RssFilterList.TabIndex = 4;
             // 
             // FeedsTree
             // 
@@ -294,7 +294,7 @@
             this.FeedsTree.Nodes.AddRange(new System.Windows.Forms.TreeNode[] {
             treeNode1});
             this.FeedsTree.Size = new System.Drawing.Size(190, 455);
-            this.FeedsTree.TabIndex = 0;
+            this.FeedsTree.TabIndex = 2;
             // 
             // uTorTab
             // 
@@ -336,7 +336,7 @@
             this.chkStop100.Location = new System.Drawing.Point(6, 149);
             this.chkStop100.Name = "chkStop100";
             this.chkStop100.Size = new System.Drawing.Size(106, 17);
-            this.chkStop100.TabIndex = 11;
+            this.chkStop100.TabIndex = 6;
             this.chkStop100.Text = "Stop when 100%";
             this.chkStop100.UseVisualStyleBackColor = true;
             // 
@@ -346,7 +346,7 @@
             this.chkForceDownload.Location = new System.Drawing.Point(6, 126);
             this.chkForceDownload.Name = "chkForceDownload";
             this.chkForceDownload.Size = new System.Drawing.Size(215, 17);
-            this.chkForceDownload.TabIndex = 10;
+            this.chkForceDownload.TabIndex = 5;
             this.chkForceDownload.Text = "uTorrent Force Download (Ignore Limits)";
             this.chkForceDownload.UseVisualStyleBackColor = true;
             // 
@@ -358,7 +358,7 @@
             this.uTorRefrash.Location = new System.Drawing.Point(9, 183);
             this.uTorRefrash.Name = "uTorRefrash";
             this.uTorRefrash.Size = new System.Drawing.Size(400, 68);
-            this.uTorRefrash.TabIndex = 5;
+            this.uTorRefrash.TabIndex = 7;
             this.uTorRefrash.TabStop = false;
             this.uTorRefrash.Text = "uTorrent Refresh Rate";
             // 
@@ -368,7 +368,7 @@
             this.label16.Location = new System.Drawing.Point(182, 28);
             this.label16.Name = "label16";
             this.label16.Size = new System.Drawing.Size(50, 13);
-            this.label16.TabIndex = 4;
+            this.label16.TabIndex = 2;
             this.label16.Text = "seconds.";
             // 
             // label17
@@ -377,7 +377,7 @@
             this.label17.Location = new System.Drawing.Point(6, 28);
             this.label17.Name = "label17";
             this.label17.Size = new System.Drawing.Size(98, 13);
-            this.label17.TabIndex = 3;
+            this.label17.TabIndex = 1;
             this.label17.Text = "Update Frequency:";
             // 
             // txtTorRefresh
@@ -393,7 +393,7 @@
             this.btnTorSave.Location = new System.Drawing.Point(784, 477);
             this.btnTorSave.Name = "btnTorSave";
             this.btnTorSave.Size = new System.Drawing.Size(75, 23);
-            this.btnTorSave.TabIndex = 9;
+            this.btnTorSave.TabIndex = 12;
             this.btnTorSave.Text = "Save";
             this.btnTorSave.UseVisualStyleBackColor = true;
             this.btnTorSave.Click += new System.EventHandler(this.btnTorSave_Click);
@@ -404,7 +404,7 @@
             this.txtPass.Name = "txtPass";
             this.txtPass.PasswordChar = '*';
             this.txtPass.Size = new System.Drawing.Size(146, 20);
-            this.txtPass.TabIndex = 8;
+            this.txtPass.TabIndex = 4;
             this.txtPass.UseSystemPasswordChar = true;
             // 
             // txtUser
@@ -412,21 +412,21 @@
             this.txtUser.Location = new System.Drawing.Point(70, 74);
             this.txtUser.Name = "txtUser";
             this.txtUser.Size = new System.Drawing.Size(146, 20);
-            this.txtUser.TabIndex = 7;
+            this.txtUser.TabIndex = 3;
             // 
             // txtPort
             // 
             this.txtPort.Location = new System.Drawing.Point(70, 48);
             this.txtPort.Name = "txtPort";
             this.txtPort.Size = new System.Drawing.Size(66, 20);
-            this.txtPort.TabIndex = 6;
+            this.txtPort.TabIndex = 2;
             // 
             // txtAddress
             // 
             this.txtAddress.Location = new System.Drawing.Point(70, 22);
             this.txtAddress.Name = "txtAddress";
             this.txtAddress.Size = new System.Drawing.Size(339, 20);
-            this.txtAddress.TabIndex = 5;
+            this.txtAddress.TabIndex = 1;
             // 
             // label4
             // 
@@ -434,7 +434,7 @@
             this.label4.Location = new System.Drawing.Point(6, 103);
             this.label4.Name = "label4";
             this.label4.Size = new System.Drawing.Size(56, 13);
-            this.label4.TabIndex = 4;
+            this.label4.TabIndex = 0;
             this.label4.Text = "Password:";
             // 
             // label3
@@ -443,7 +443,7 @@
             this.label3.Location = new System.Drawing.Point(6, 77);
             this.label3.Name = "label3";
             this.label3.Size = new System.Drawing.Size(58, 13);
-            this.label3.TabIndex = 3;
+            this.label3.TabIndex = 0;
             this.label3.Text = "Username:";
             // 
             // label2
@@ -452,7 +452,7 @@
             this.label2.Location = new System.Drawing.Point(6, 51);
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(29, 13);
-            this.label2.TabIndex = 2;
+            this.label2.TabIndex = 0;
             this.label2.Text = "Port:";
             // 
             // label1
@@ -461,7 +461,7 @@
             this.label1.Location = new System.Drawing.Point(6, 25);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(48, 13);
-            this.label1.TabIndex = 1;
+            this.label1.TabIndex = 0;
             this.label1.Text = "Address:";
             // 
             // UpdFreqGroup
@@ -472,7 +472,7 @@
             this.UpdFreqGroup.Location = new System.Drawing.Point(9, 279);
             this.UpdFreqGroup.Name = "UpdFreqGroup";
             this.UpdFreqGroup.Size = new System.Drawing.Size(400, 68);
-            this.UpdFreqGroup.TabIndex = 0;
+            this.UpdFreqGroup.TabIndex = 8;
             this.UpdFreqGroup.TabStop = false;
             this.UpdFreqGroup.Text = "RSS Update Frequency";
             // 
@@ -482,7 +482,7 @@
             this.label6.Location = new System.Drawing.Point(182, 28);
             this.label6.Name = "label6";
             this.label6.Size = new System.Drawing.Size(46, 13);
-            this.label6.TabIndex = 4;
+            this.label6.TabIndex = 2;
             this.label6.Text = "minutes.";
             // 
             // label5
@@ -491,7 +491,7 @@
             this.label5.Location = new System.Drawing.Point(6, 28);
             this.label5.Name = "label5";
             this.label5.Size = new System.Drawing.Size(98, 13);
-            this.label5.TabIndex = 3;
+            this.label5.TabIndex = 1;
             this.label5.Text = "Update Frequency:";
             // 
             // txtUpSeconds
