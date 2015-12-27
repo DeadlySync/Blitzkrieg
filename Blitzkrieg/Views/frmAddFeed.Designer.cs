@@ -36,6 +36,8 @@
             this.txtAddress = new System.Windows.Forms.TextBox();
             this.txtAlias = new System.Windows.Forms.TextBox();
             this.errorProvider = new System.Windows.Forms.ErrorProvider(this.components);
+            this.cboPriority = new System.Windows.Forms.ComboBox();
+            this.label3 = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.errorProvider)).BeginInit();
             this.SuspendLayout();
             // 
@@ -51,7 +53,7 @@
             // label2
             // 
             this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(12, 48);
+            this.label2.Location = new System.Drawing.Point(12, 41);
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(32, 13);
             this.label2.TabIndex = 1;
@@ -60,7 +62,7 @@
             // chkIsActive
             // 
             this.chkIsActive.AutoSize = true;
-            this.chkIsActive.Location = new System.Drawing.Point(15, 84);
+            this.chkIsActive.Location = new System.Drawing.Point(15, 91);
             this.chkIsActive.Name = "chkIsActive";
             this.chkIsActive.Size = new System.Drawing.Size(83, 17);
             this.chkIsActive.TabIndex = 3;
@@ -69,7 +71,7 @@
             // 
             // btnEditFeedSave
             // 
-            this.btnEditFeedSave.Location = new System.Drawing.Point(251, 80);
+            this.btnEditFeedSave.Location = new System.Drawing.Point(251, 87);
             this.btnEditFeedSave.Name = "btnEditFeedSave";
             this.btnEditFeedSave.Size = new System.Drawing.Size(75, 23);
             this.btnEditFeedSave.TabIndex = 4;
@@ -79,27 +81,46 @@
             // 
             // txtAddress
             // 
-            this.txtAddress.Location = new System.Drawing.Point(66, 12);
+            this.txtAddress.Location = new System.Drawing.Point(86, 12);
             this.txtAddress.Name = "txtAddress";
-            this.txtAddress.Size = new System.Drawing.Size(260, 20);
+            this.txtAddress.Size = new System.Drawing.Size(240, 20);
             this.txtAddress.TabIndex = 5;
             // 
             // txtAlias
             // 
-            this.txtAlias.Location = new System.Drawing.Point(66, 45);
+            this.txtAlias.Location = new System.Drawing.Point(86, 38);
             this.txtAlias.Name = "txtAlias";
-            this.txtAlias.Size = new System.Drawing.Size(260, 20);
+            this.txtAlias.Size = new System.Drawing.Size(240, 20);
             this.txtAlias.TabIndex = 6;
             // 
             // errorProvider
             // 
             this.errorProvider.ContainerControl = this;
             // 
+            // cboPriority
+            // 
+            this.cboPriority.FormattingEnabled = true;
+            this.cboPriority.Location = new System.Drawing.Point(86, 64);
+            this.cboPriority.Name = "cboPriority";
+            this.cboPriority.Size = new System.Drawing.Size(72, 21);
+            this.cboPriority.TabIndex = 7;
+            // 
+            // label3
+            // 
+            this.label3.AutoSize = true;
+            this.label3.Location = new System.Drawing.Point(12, 67);
+            this.label3.Name = "label3";
+            this.label3.Size = new System.Drawing.Size(68, 13);
+            this.label3.TabIndex = 8;
+            this.label3.Text = "Feed Priority:";
+            // 
             // frmAddFeed
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(338, 116);
+            this.Controls.Add(this.label3);
+            this.Controls.Add(this.cboPriority);
             this.Controls.Add(this.txtAlias);
             this.Controls.Add(this.txtAddress);
             this.Controls.Add(this.btnEditFeedSave);
@@ -115,6 +136,7 @@
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
             this.Text = "Edit RSS Feed";
             this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.OnFormClosed);
+            this.Load += new System.EventHandler(this.frmAddFeed_Load);
             ((System.ComponentModel.ISupportInitialize)(this.errorProvider)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
@@ -130,5 +152,7 @@
         private System.Windows.Forms.TextBox txtAddress;
         private System.Windows.Forms.TextBox txtAlias;
         private System.Windows.Forms.ErrorProvider errorProvider;
+        private System.Windows.Forms.Label label3;
+        private System.Windows.Forms.ComboBox cboPriority;
     }
 }

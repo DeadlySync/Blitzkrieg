@@ -29,7 +29,7 @@
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
-            System.Windows.Forms.TreeNode treeNode1 = new System.Windows.Forms.TreeNode("Feeds");
+            System.Windows.Forms.TreeNode treeNode5 = new System.Windows.Forms.TreeNode("Feeds");
             this.mainTabs = new System.Windows.Forms.TabControl();
             this.RssTab = new System.Windows.Forms.TabPage();
             this.RssGroup = new System.Windows.Forms.GroupBox();
@@ -239,6 +239,7 @@
             this.btnAddFilter.TabIndex = 3;
             this.btnAddFilter.Text = "Add Filter";
             this.btnAddFilter.UseVisualStyleBackColor = true;
+            this.btnAddFilter.Click += new System.EventHandler(this.btnAddFilter_Click);
             // 
             // btnDelFilter
             // 
@@ -249,6 +250,7 @@
             this.btnDelFilter.TabIndex = 2;
             this.btnDelFilter.Text = "Delete Filter";
             this.btnDelFilter.UseVisualStyleBackColor = true;
+            this.btnDelFilter.Click += new System.EventHandler(this.btnDelFilter_Click);
             // 
             // btnCheckNone
             // 
@@ -259,6 +261,7 @@
             this.btnCheckNone.TabIndex = 1;
             this.btnCheckNone.Text = "Uncheck All";
             this.btnCheckNone.UseVisualStyleBackColor = true;
+            this.btnCheckNone.Click += new System.EventHandler(this.btnCheckNone_Click);
             // 
             // btnCheckAll
             // 
@@ -269,6 +272,7 @@
             this.btnCheckAll.TabIndex = 0;
             this.btnCheckAll.Text = "Check All";
             this.btnCheckAll.UseVisualStyleBackColor = true;
+            this.btnCheckAll.Click += new System.EventHandler(this.btnCheckAll_Click);
             // 
             // RssFilterList
             // 
@@ -288,11 +292,11 @@
             this.FeedsTree.Location = new System.Drawing.Point(7, 19);
             this.FeedsTree.MinimumSize = new System.Drawing.Size(190, 4);
             this.FeedsTree.Name = "FeedsTree";
-            treeNode1.Checked = true;
-            treeNode1.Name = "FeedsRoot";
-            treeNode1.Text = "Feeds";
+            treeNode5.Checked = true;
+            treeNode5.Name = "FeedsRoot";
+            treeNode5.Text = "Feeds";
             this.FeedsTree.Nodes.AddRange(new System.Windows.Forms.TreeNode[] {
-            treeNode1});
+            treeNode5});
             this.FeedsTree.Size = new System.Drawing.Size(190, 455);
             this.FeedsTree.TabIndex = 2;
             // 
@@ -621,6 +625,7 @@
             this.btnClearLog.TabIndex = 16;
             this.btnClearLog.Text = "Clear";
             this.btnClearLog.UseVisualStyleBackColor = true;
+            this.btnClearLog.Click += new System.EventHandler(this.btnClearLog_Click);
             // 
             // LogListBox
             // 
@@ -642,6 +647,7 @@
             this.btnSaveDns.TabIndex = 14;
             this.btnSaveDns.Text = "Save";
             this.btnSaveDns.UseVisualStyleBackColor = true;
+            this.btnSaveDns.Click += new System.EventHandler(this.btnSaveDns_Click);
             // 
             // btnAddDomain
             // 
@@ -652,6 +658,7 @@
             this.btnAddDomain.TabIndex = 13;
             this.btnAddDomain.Text = "Add Domain";
             this.btnAddDomain.UseVisualStyleBackColor = true;
+            this.btnAddDomain.Click += new System.EventHandler(this.btnAddDomain_Click);
             // 
             // btnRemoveDomain
             // 
@@ -662,6 +669,7 @@
             this.btnRemoveDomain.TabIndex = 12;
             this.btnRemoveDomain.Text = "Remove";
             this.btnRemoveDomain.UseVisualStyleBackColor = true;
+            this.btnRemoveDomain.Click += new System.EventHandler(this.btnRemoveDomain_Click);
             // 
             // txtDnsPort
             // 

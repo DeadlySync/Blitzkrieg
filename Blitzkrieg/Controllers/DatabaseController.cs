@@ -1,6 +1,8 @@
 ﻿using Blitzkrieg.DataBase;
+using Blitzkrieg.Views;
 using System;
 using System.Linq;
+using System.Security;
 using System.Threading;
 using System.Windows.Forms;
 
@@ -8,6 +10,9 @@ namespace Blitzkrieg.Controllers
 {
     public class DatabaseController
     {
+        private static SecureString gstrKey = null;
+        private static CryptController crypt = null;
+
         private static readonly string NAME = "Blitzkrieg";
 
         public void SaveUserConfig(frmMain parentForm)
@@ -16,17 +21,26 @@ namespace Blitzkrieg.Controllers
             {
                 using (var context = new dataEntities())
                 {
+                    bool isNew = false;
                     var conf = context.UserConfig.OrderByDescending(c => c.DateAdd).FirstOrDefault();
-                    context.UserConfig.Remove(conf);
-                    context.SaveChanges();
+
+                    if (conf == null)
+                    {
+                        conf = new UserConfig();
+                        conf.DateAdd = DateTime.Now;
+                        isNew = true;
+                    }
+                    else
+                        conf.DateUpdate = DateTime.Now;
 
                     conf.IsMaximized = parentForm.WindowState == FormWindowState.Maximized;
                     conf.RssFeedTreeWidth = parentForm.RssTreeView.Width;
                     conf.ScreenHeight = parentForm.Height;
                     conf.ScreenWidth = parentForm.Width;
-                    conf.DateUpdate = DateTime.Now;
 
-                    context.UserConfig.Add(conf);
+                    if (isNew)
+                        context.UserConfig.Add(conf);
+
                     context.SaveChanges();
                 }
             }
@@ -39,6 +53,9 @@ namespace Blitzkrieg.Controllers
 
         public void SaveTorConfig(frmMain parentForm)
         {
+            if (crypt == null)
+                throw new Exception("User not logged on.");
+
             parentForm.MainErrorProvider.Clear();
             var error = false;
             var address = parentForm.TorAddress.Text;
@@ -50,6 +67,8 @@ namespace Blitzkrieg.Controllers
 
             string url = string.Empty;
             string fullUri = string.Empty;
+
+            #region [ Data validation ]
 
             if (string.IsNullOrEmpty(address))
             {
@@ -151,7 +170,6 @@ namespace Blitzkrieg.Controllers
                     }
                 }
 
-
                 if (address.StartsWith("http://"))
                 {
                     fullUri = "http://" + user + ":" + pass + "@" + address.Substring(0, 7) + ":" + port + "/gui";
@@ -174,42 +192,89 @@ namespace Blitzkrieg.Controllers
                     url = fullUri;
             }
 
+            #endregion [ Data validation ]
+
             using (var context = new dataEntities())
             {
                 parentForm.Text += " - Saving...";
                 parentForm.Update();
 
+                bool isNew = false;
                 var torConfig = context.TorrentClient.OrderByDescending(t => t.DateAdd).FirstOrDefault();
 
                 if (torConfig == null)
                 {
                     torConfig = new TorrentClient();
                     torConfig.DateAdd = DateTime.Now;
+                    isNew = true;
                 }
                 else
-                {
-                    context.TorrentClient.Remove(torConfig);
-                    context.SaveChanges();
-
                     torConfig.DateUpdate = DateTime.Now;
-                }
+                //TODO: check how to handle "save" misspress and "update";
 
-                torConfig.FullUri = url;
-                torConfig.Address = address;
+                torConfig.FullUri = crypt.Encrypt(url, gstrKey);
+                torConfig.Address = crypt.Encrypt(address, gstrKey);
                 torConfig.Port = Convert.ToInt64(port);
-                torConfig.Username = user;
-                torConfig.Password = pass;
+                torConfig.Username = crypt.Encrypt(user, gstrKey);
+                torConfig.Password = crypt.Encrypt(pass, gstrKey);
                 torConfig.IsForceDown = parentForm.TorChkForceDown.Checked;
                 torConfig.IsStop100 = parentForm.TorChkStop100.Checked;
                 torConfig.UpdateRate = Convert.ToInt64(update);
                 torConfig.RefreshRate = Convert.ToInt64(refresh);
 
-                context.TorrentClient.Add(torConfig);
+                if (isNew)
+                    context.TorrentClient.Add(torConfig);
+
                 context.SaveChanges();
             }
 
             parentForm.Text = NAME;
             parentForm.Update();
+        }
+
+        public void SavePassword(string hash)
+        {
+            using (var context = new dataEntities())
+            {
+                var conf = context.UserConfig.OrderByDescending(c => c.DateAdd).FirstOrDefault();
+
+                if (conf == null)
+                {
+                    conf = new UserConfig();
+
+                    conf.Password = hash;
+                    conf.DateAdd = DateTime.Now;
+
+                    context.UserConfig.Add(conf);
+                    context.SaveChanges();
+                    return;
+                }
+
+                conf.Password = hash;
+                conf.DateUpdate = DateTime.Now;
+
+                context.SaveChanges();
+            }
+        }
+
+        public void SaveFeeds(frmAddFeed feedForm)
+        {
+            if (crypt == null)
+                throw new Exception("User not logged on.");
+
+            using (var entities = new dataEntities())
+            {
+                var feed = new RssFeeds();
+
+                feed.FeedAlias = crypt.Encrypt(feedForm.FeedAlias, gstrKey);
+                feed.FeedUrl = crypt.Encrypt(feedForm.FeedAddress, gstrKey);
+                feed.IsActive = feedForm.IsActive;
+                feed.FeedPriority = feedForm.FeedPriority;
+                feed.DateAdd = DateTime.Now;
+
+                entities.RssFeeds.Add(feed);
+                entities.SaveChanges();
+            }
         }
 
         public void LoadFeedTree(frmMain parentForm)
@@ -219,9 +284,12 @@ namespace Blitzkrieg.Controllers
             {
                 try
                 {
+                    if (crypt == null)
+                        throw new Exception("User not logged in.");
+
                     using (var context = new dataEntities())
                     {
-                        var feeds = context.RssFeeds.OrderBy(f => f.FeedAlias).ToList();
+                        var feeds = context.RssFeeds.OrderBy(f => f.FeedPriority).ToList();
 
                         if (feeds == null)
                             return;
@@ -230,7 +298,7 @@ namespace Blitzkrieg.Controllers
                         {
                             foreach (var item in feeds)
                             {
-                                parentForm.RssTreeView.Nodes[0].Nodes.Add(item.FeedAlias);
+                                parentForm.RssTreeView.Nodes[0].Nodes.Add(crypt.Decrypt(item.FeedAlias, gstrKey));
                             }
 
                             parentForm.RssTreeView.ExpandAll();
@@ -242,13 +310,29 @@ namespace Blitzkrieg.Controllers
                 }
                 catch (Exception ex)
                 {
-                    MessageBox.Show(ex.Message);
+                    MessageBox.Show(parentForm, ex.Message, "Application Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    Application.Exit();
                 }
             }));
 
             thread.Name = "Load Feeds";
             thread.IsBackground = true;
             thread.Start();
+        }
+
+        public int CountFeeds()
+        {
+            try
+            {
+                using (var context = new dataEntities())
+                {
+                    return context.RssFeeds.Count();
+                }
+            }
+            catch
+            {
+                return 0;
+            }
         }
 
         public void LoadSystem(frmMain parentForm)
@@ -283,7 +367,8 @@ namespace Blitzkrieg.Controllers
                 }
                 catch (Exception ex)
                 {
-                    MessageBox.Show(ex.Message);
+                    MessageBox.Show(parentForm, ex.Message, "Application Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    Application.Exit();
                 }
             }));
 
@@ -298,6 +383,9 @@ namespace Blitzkrieg.Controllers
             {
                 try
                 {
+                    if (crypt == null)
+                        throw new Exception("User not logged in.");
+
                     using (var context = new dataEntities())
                     {
                         var torConfig = context.TorrentClient.OrderByDescending(c => c.DateAdd).FirstOrDefault();
@@ -307,10 +395,10 @@ namespace Blitzkrieg.Controllers
 
                         parentForm.Invoke(new Action(() =>
                         {
-                            parentForm.TorAddress.Text = torConfig.Address;
+                            parentForm.TorAddress.Text = crypt.Decrypt(torConfig.Address, gstrKey);
                             parentForm.TorPort.Text = torConfig.Port.ToString();
-                            parentForm.TorUser.Text = torConfig.Username;
-                            parentForm.TorPass.Text = torConfig.Password;
+                            parentForm.TorUser.Text = crypt.Decrypt(torConfig.Username, gstrKey);
+                            parentForm.TorPass.Text = torConfig.Password.Substring(0, 6); //fake pass
                             parentForm.TorChkForceDown.Checked = torConfig.IsForceDown.Value;
                             parentForm.TorChkStop100.Checked = torConfig.IsStop100.Value;
                             parentForm.TorUpSeconds.Text = torConfig.UpdateRate.ToString();
@@ -322,13 +410,81 @@ namespace Blitzkrieg.Controllers
                 }
                 catch (Exception ex)
                 {
-                    MessageBox.Show(ex.Message);
+                    MessageBox.Show(parentForm, ex.Message, "Application Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    Application.Exit();
                 }
             }));
 
             thread.Name = "Load uTorrent Config";
             thread.IsBackground = true;
             thread.Start();
+        }
+
+        public bool LoadPassword()
+        {
+            try
+            {
+                using (var context = new dataEntities())
+                {
+                    var password = context.UserConfig.Where(p => p.Password != null).Select(p => p.Password).FirstOrDefault();
+
+                    if (string.IsNullOrEmpty(password))
+                        return false;
+                    else
+                        return true;
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+                return false;
+            }
+        }
+
+        public bool MakeLogin(string pass)
+        {
+            if (string.IsNullOrEmpty(pass))
+                return false;
+
+            PasswordController pc = null;
+
+            using (var context = new dataEntities())
+            {
+                var password = context.UserConfig.Where(p => p != null).Select(p => p.Password).FirstOrDefault();
+
+                if (string.IsNullOrEmpty(password))
+                {
+                    return false;
+                }
+
+                pc = new PasswordController();
+                var isValid = pc.ValidatePassword(pass, password);
+                pass = string.Empty;
+
+                if (isValid)
+                {
+                    var arrPass = pc.GetHash(password).ToCharArray();
+
+                    unsafe
+                    {
+                        fixed (char* pChars = arrPass)
+                        {
+                            if (gstrKey == null)
+                                gstrKey = new SecureString(pChars, arrPass.Length);
+                        }
+                    }
+
+                    for (int i = 0; i < arrPass.Length; i++)
+                    {
+                        arrPass[i] = '\0';
+                    }
+
+                    gstrKey.MakeReadOnly();
+                    crypt = new CryptController();
+                }
+
+                return isValid;
+            }
         }
     }
 }
