@@ -29,7 +29,8 @@
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
-            System.Windows.Forms.TreeNode treeNode5 = new System.Windows.Forms.TreeNode("Feeds");
+            System.Windows.Forms.TreeNode treeNode1 = new System.Windows.Forms.TreeNode("Feeds");
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(frmMain));
             this.mainTabs = new System.Windows.Forms.TabControl();
             this.RssTab = new System.Windows.Forms.TabPage();
             this.RssGroup = new System.Windows.Forms.GroupBox();
@@ -94,6 +95,13 @@
             this.label8 = new System.Windows.Forms.Label();
             this.label7 = new System.Windows.Forms.Label();
             this.errorProvider = new System.Windows.Forms.ErrorProvider(this.components);
+            this.notifyIcon = new System.Windows.Forms.NotifyIcon(this.components);
+            this.menuStrip = new System.Windows.Forms.MenuStrip();
+            this.FileMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.ExitMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripContainer1 = new System.Windows.Forms.ToolStripContainer();
+            this.btnTorEdit = new System.Windows.Forms.Button();
+            this.btnDnsEdit = new System.Windows.Forms.Button();
             this.mainTabs.SuspendLayout();
             this.RssTab.SuspendLayout();
             this.RssGroup.SuspendLayout();
@@ -111,6 +119,10 @@
             this.UpdDnsFreq.SuspendLayout();
             this.LogGroup.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.errorProvider)).BeginInit();
+            this.menuStrip.SuspendLayout();
+            this.toolStripContainer1.ContentPanel.SuspendLayout();
+            this.toolStripContainer1.TopToolStripPanel.SuspendLayout();
+            this.toolStripContainer1.SuspendLayout();
             this.SuspendLayout();
             // 
             // mainTabs
@@ -121,10 +133,10 @@
             this.mainTabs.Controls.Add(this.RssTab);
             this.mainTabs.Controls.Add(this.uTorTab);
             this.mainTabs.Controls.Add(this.DnsTab);
-            this.mainTabs.Location = new System.Drawing.Point(3, 3);
+            this.mainTabs.Location = new System.Drawing.Point(2, 3);
             this.mainTabs.Name = "mainTabs";
             this.mainTabs.SelectedIndex = 0;
-            this.mainTabs.Size = new System.Drawing.Size(879, 538);
+            this.mainTabs.Size = new System.Drawing.Size(882, 515);
             this.mainTabs.TabIndex = 0;
             // 
             // RssTab
@@ -133,7 +145,7 @@
             this.RssTab.Location = new System.Drawing.Point(4, 22);
             this.RssTab.Name = "RssTab";
             this.RssTab.Padding = new System.Windows.Forms.Padding(3);
-            this.RssTab.Size = new System.Drawing.Size(871, 512);
+            this.RssTab.Size = new System.Drawing.Size(874, 489);
             this.RssTab.TabIndex = 0;
             this.RssTab.Text = "RSS Feed";
             this.RssTab.UseVisualStyleBackColor = true;
@@ -146,7 +158,7 @@
             this.RssGroup.Dock = System.Windows.Forms.DockStyle.Fill;
             this.RssGroup.Location = new System.Drawing.Point(3, 3);
             this.RssGroup.Name = "RssGroup";
-            this.RssGroup.Size = new System.Drawing.Size(865, 506);
+            this.RssGroup.Size = new System.Drawing.Size(868, 483);
             this.RssGroup.TabIndex = 0;
             this.RssGroup.TabStop = false;
             this.RssGroup.Text = "RSS Feed Configuration";
@@ -154,7 +166,7 @@
             // btnAddFeed
             // 
             this.btnAddFeed.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.btnAddFeed.Location = new System.Drawing.Point(7, 480);
+            this.btnAddFeed.Location = new System.Drawing.Point(7, 457);
             this.btnAddFeed.Name = "btnAddFeed";
             this.btnAddFeed.Size = new System.Drawing.Size(75, 23);
             this.btnAddFeed.TabIndex = 0;
@@ -168,7 +180,6 @@
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.RssDataContainer.Location = new System.Drawing.Point(203, 19);
-            this.RssDataContainer.MinimumSize = new System.Drawing.Size(656, 481);
             this.RssDataContainer.Name = "RssDataContainer";
             this.RssDataContainer.Orientation = System.Windows.Forms.Orientation.Horizontal;
             // 
@@ -183,8 +194,8 @@
             this.RssDataContainer.Panel2.Controls.Add(this.btnCheckNone);
             this.RssDataContainer.Panel2.Controls.Add(this.btnCheckAll);
             this.RssDataContainer.Panel2.Controls.Add(this.RssFilterList);
-            this.RssDataContainer.Size = new System.Drawing.Size(656, 481);
-            this.RssDataContainer.SplitterDistance = 234;
+            this.RssDataContainer.Size = new System.Drawing.Size(659, 467);
+            this.RssDataContainer.SplitterDistance = 227;
             this.RssDataContainer.TabIndex = 1;
             // 
             // RssItemGrid
@@ -203,7 +214,7 @@
             this.RssItemGrid.Location = new System.Drawing.Point(0, 0);
             this.RssItemGrid.Name = "RssItemGrid";
             this.RssItemGrid.ReadOnly = true;
-            this.RssItemGrid.Size = new System.Drawing.Size(656, 234);
+            this.RssItemGrid.Size = new System.Drawing.Size(659, 227);
             this.RssItemGrid.TabIndex = 0;
             // 
             // ItemName
@@ -233,7 +244,7 @@
             // btnAddFilter
             // 
             this.btnAddFilter.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnAddFilter.Location = new System.Drawing.Point(578, 220);
+            this.btnAddFilter.Location = new System.Drawing.Point(581, 207);
             this.btnAddFilter.Name = "btnAddFilter";
             this.btnAddFilter.Size = new System.Drawing.Size(75, 23);
             this.btnAddFilter.TabIndex = 3;
@@ -244,7 +255,7 @@
             // btnDelFilter
             // 
             this.btnDelFilter.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnDelFilter.Location = new System.Drawing.Point(497, 220);
+            this.btnDelFilter.Location = new System.Drawing.Point(500, 207);
             this.btnDelFilter.Name = "btnDelFilter";
             this.btnDelFilter.Size = new System.Drawing.Size(75, 23);
             this.btnDelFilter.TabIndex = 2;
@@ -255,7 +266,7 @@
             // btnCheckNone
             // 
             this.btnCheckNone.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.btnCheckNone.Location = new System.Drawing.Point(85, 220);
+            this.btnCheckNone.Location = new System.Drawing.Point(84, 207);
             this.btnCheckNone.Name = "btnCheckNone";
             this.btnCheckNone.Size = new System.Drawing.Size(75, 23);
             this.btnCheckNone.TabIndex = 1;
@@ -266,7 +277,7 @@
             // btnCheckAll
             // 
             this.btnCheckAll.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.btnCheckAll.Location = new System.Drawing.Point(4, 220);
+            this.btnCheckAll.Location = new System.Drawing.Point(3, 207);
             this.btnCheckAll.Name = "btnCheckAll";
             this.btnCheckAll.Size = new System.Drawing.Size(75, 23);
             this.btnCheckAll.TabIndex = 0;
@@ -282,7 +293,7 @@
             this.RssFilterList.FormattingEnabled = true;
             this.RssFilterList.Location = new System.Drawing.Point(0, 3);
             this.RssFilterList.Name = "RssFilterList";
-            this.RssFilterList.Size = new System.Drawing.Size(656, 214);
+            this.RssFilterList.Size = new System.Drawing.Size(659, 199);
             this.RssFilterList.TabIndex = 4;
             // 
             // FeedsTree
@@ -292,12 +303,12 @@
             this.FeedsTree.Location = new System.Drawing.Point(7, 19);
             this.FeedsTree.MinimumSize = new System.Drawing.Size(190, 4);
             this.FeedsTree.Name = "FeedsTree";
-            treeNode5.Checked = true;
-            treeNode5.Name = "FeedsRoot";
-            treeNode5.Text = "Feeds";
+            treeNode1.Checked = true;
+            treeNode1.Name = "FeedsRoot";
+            treeNode1.Text = "Feeds";
             this.FeedsTree.Nodes.AddRange(new System.Windows.Forms.TreeNode[] {
-            treeNode5});
-            this.FeedsTree.Size = new System.Drawing.Size(190, 455);
+            treeNode1});
+            this.FeedsTree.Size = new System.Drawing.Size(190, 432);
             this.FeedsTree.TabIndex = 2;
             // 
             // uTorTab
@@ -306,13 +317,14 @@
             this.uTorTab.Location = new System.Drawing.Point(4, 22);
             this.uTorTab.Name = "uTorTab";
             this.uTorTab.Padding = new System.Windows.Forms.Padding(3);
-            this.uTorTab.Size = new System.Drawing.Size(871, 512);
+            this.uTorTab.Size = new System.Drawing.Size(874, 489);
             this.uTorTab.TabIndex = 1;
             this.uTorTab.Text = "uTorrent";
             this.uTorTab.UseVisualStyleBackColor = true;
             // 
             // uTorGroup
             // 
+            this.uTorGroup.Controls.Add(this.btnTorEdit);
             this.uTorGroup.Controls.Add(this.chkStop100);
             this.uTorGroup.Controls.Add(this.chkForceDownload);
             this.uTorGroup.Controls.Add(this.uTorRefrash);
@@ -329,7 +341,7 @@
             this.uTorGroup.Dock = System.Windows.Forms.DockStyle.Fill;
             this.uTorGroup.Location = new System.Drawing.Point(3, 3);
             this.uTorGroup.Name = "uTorGroup";
-            this.uTorGroup.Size = new System.Drawing.Size(865, 506);
+            this.uTorGroup.Size = new System.Drawing.Size(868, 483);
             this.uTorGroup.TabIndex = 0;
             this.uTorGroup.TabStop = false;
             this.uTorGroup.Text = "uTorrent Web Configuration";
@@ -394,7 +406,7 @@
             // btnTorSave
             // 
             this.btnTorSave.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnTorSave.Location = new System.Drawing.Point(784, 477);
+            this.btnTorSave.Location = new System.Drawing.Point(784, 457);
             this.btnTorSave.Name = "btnTorSave";
             this.btnTorSave.Size = new System.Drawing.Size(75, 23);
             this.btnTorSave.TabIndex = 12;
@@ -511,13 +523,14 @@
             this.DnsTab.Location = new System.Drawing.Point(4, 22);
             this.DnsTab.Name = "DnsTab";
             this.DnsTab.Padding = new System.Windows.Forms.Padding(3);
-            this.DnsTab.Size = new System.Drawing.Size(871, 512);
+            this.DnsTab.Size = new System.Drawing.Size(874, 489);
             this.DnsTab.TabIndex = 2;
             this.DnsTab.Text = "DNS";
             this.DnsTab.UseVisualStyleBackColor = true;
             // 
             // DDNSGroup
             // 
+            this.DDNSGroup.Controls.Add(this.btnDnsEdit);
             this.DDNSGroup.Controls.Add(this.UpdDnsFreq);
             this.DDNSGroup.Controls.Add(this.label13);
             this.DDNSGroup.Controls.Add(this.LogGroup);
@@ -539,7 +552,7 @@
             this.DDNSGroup.Dock = System.Windows.Forms.DockStyle.Fill;
             this.DDNSGroup.Location = new System.Drawing.Point(3, 3);
             this.DDNSGroup.Name = "DDNSGroup";
-            this.DDNSGroup.Size = new System.Drawing.Size(865, 506);
+            this.DDNSGroup.Size = new System.Drawing.Size(868, 483);
             this.DDNSGroup.TabIndex = 0;
             this.DDNSGroup.TabStop = false;
             this.DDNSGroup.Text = "Dynamic DNS Client Configuration";
@@ -611,7 +624,7 @@
             this.LogGroup.Controls.Add(this.LogListBox);
             this.LogGroup.Location = new System.Drawing.Point(338, 19);
             this.LogGroup.Name = "LogGroup";
-            this.LogGroup.Size = new System.Drawing.Size(521, 451);
+            this.LogGroup.Size = new System.Drawing.Size(521, 436);
             this.LogGroup.TabIndex = 15;
             this.LogGroup.TabStop = false;
             this.LogGroup.Text = "DNS Log";
@@ -619,7 +632,7 @@
             // btnClearLog
             // 
             this.btnClearLog.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnClearLog.Location = new System.Drawing.Point(443, 422);
+            this.btnClearLog.Location = new System.Drawing.Point(443, 407);
             this.btnClearLog.Name = "btnClearLog";
             this.btnClearLog.Size = new System.Drawing.Size(75, 23);
             this.btnClearLog.TabIndex = 16;
@@ -635,13 +648,13 @@
             this.LogListBox.FormattingEnabled = true;
             this.LogListBox.Location = new System.Drawing.Point(7, 20);
             this.LogListBox.Name = "LogListBox";
-            this.LogListBox.Size = new System.Drawing.Size(511, 394);
+            this.LogListBox.Size = new System.Drawing.Size(511, 381);
             this.LogListBox.TabIndex = 0;
             // 
             // btnSaveDns
             // 
             this.btnSaveDns.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnSaveDns.Location = new System.Drawing.Point(784, 477);
+            this.btnSaveDns.Location = new System.Drawing.Point(784, 460);
             this.btnSaveDns.Name = "btnSaveDns";
             this.btnSaveDns.Size = new System.Drawing.Size(75, 23);
             this.btnSaveDns.TabIndex = 14;
@@ -652,7 +665,7 @@
             // btnAddDomain
             // 
             this.btnAddDomain.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.btnAddDomain.Location = new System.Drawing.Point(155, 476);
+            this.btnAddDomain.Location = new System.Drawing.Point(155, 460);
             this.btnAddDomain.Name = "btnAddDomain";
             this.btnAddDomain.Size = new System.Drawing.Size(75, 23);
             this.btnAddDomain.TabIndex = 13;
@@ -663,7 +676,7 @@
             // btnRemoveDomain
             // 
             this.btnRemoveDomain.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.btnRemoveDomain.Location = new System.Drawing.Point(236, 476);
+            this.btnRemoveDomain.Location = new System.Drawing.Point(236, 460);
             this.btnRemoveDomain.Name = "btnRemoveDomain";
             this.btnRemoveDomain.Size = new System.Drawing.Size(75, 23);
             this.btnRemoveDomain.TabIndex = 12;
@@ -713,7 +726,7 @@
             this.DomainListBox.FormattingEnabled = true;
             this.DomainListBox.Location = new System.Drawing.Point(6, 286);
             this.DomainListBox.Name = "DomainListBox";
-            this.DomainListBox.Size = new System.Drawing.Size(305, 184);
+            this.DomainListBox.Size = new System.Drawing.Size(305, 169);
             this.DomainListBox.TabIndex = 6;
             // 
             // label12
@@ -774,15 +787,91 @@
             // 
             this.errorProvider.ContainerControl = this;
             // 
+            // notifyIcon
+            // 
+            this.notifyIcon.Icon = ((System.Drawing.Icon)(resources.GetObject("notifyIcon.Icon")));
+            this.notifyIcon.Text = "Blitzkrieg";
+            this.notifyIcon.Visible = true;
+            this.notifyIcon.MouseDoubleClick += new System.Windows.Forms.MouseEventHandler(this.notifyIcon_MouseDoubleClick);
+            // 
+            // menuStrip
+            // 
+            this.menuStrip.Dock = System.Windows.Forms.DockStyle.None;
+            this.menuStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.FileMenuItem});
+            this.menuStrip.Location = new System.Drawing.Point(0, 0);
+            this.menuStrip.Name = "menuStrip";
+            this.menuStrip.Size = new System.Drawing.Size(884, 24);
+            this.menuStrip.TabIndex = 1;
+            this.menuStrip.Text = "menuStrip1";
+            // 
+            // FileMenuItem
+            // 
+            this.FileMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.ExitMenuItem});
+            this.FileMenuItem.Name = "FileMenuItem";
+            this.FileMenuItem.Size = new System.Drawing.Size(37, 20);
+            this.FileMenuItem.Text = "&File";
+            // 
+            // ExitMenuItem
+            // 
+            this.ExitMenuItem.Name = "ExitMenuItem";
+            this.ExitMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.ExitMenuItem.Text = "&Exit";
+            this.ExitMenuItem.Click += new System.EventHandler(this.ExitMenuItem_Click);
+            // 
+            // toolStripContainer1
+            // 
+            // 
+            // toolStripContainer1.ContentPanel
+            // 
+            this.toolStripContainer1.ContentPanel.AutoScroll = true;
+            this.toolStripContainer1.ContentPanel.Controls.Add(this.mainTabs);
+            this.toolStripContainer1.ContentPanel.Size = new System.Drawing.Size(884, 518);
+            this.toolStripContainer1.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.toolStripContainer1.Location = new System.Drawing.Point(0, 0);
+            this.toolStripContainer1.Name = "toolStripContainer1";
+            this.toolStripContainer1.Size = new System.Drawing.Size(884, 542);
+            this.toolStripContainer1.TabIndex = 2;
+            this.toolStripContainer1.Text = "toolStripContainer1";
+            // 
+            // toolStripContainer1.TopToolStripPanel
+            // 
+            this.toolStripContainer1.TopToolStripPanel.Controls.Add(this.menuStrip);
+            // 
+            // btnTorEdit
+            // 
+            this.btnTorEdit.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnTorEdit.Location = new System.Drawing.Point(703, 457);
+            this.btnTorEdit.Name = "btnTorEdit";
+            this.btnTorEdit.Size = new System.Drawing.Size(75, 23);
+            this.btnTorEdit.TabIndex = 13;
+            this.btnTorEdit.Text = "Edit";
+            this.btnTorEdit.UseVisualStyleBackColor = true;
+            this.btnTorEdit.Click += new System.EventHandler(this.btnTorEdit_Click);
+            // 
+            // btnDnsEdit
+            // 
+            this.btnDnsEdit.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnDnsEdit.Location = new System.Drawing.Point(703, 460);
+            this.btnDnsEdit.Name = "btnDnsEdit";
+            this.btnDnsEdit.Size = new System.Drawing.Size(75, 23);
+            this.btnDnsEdit.TabIndex = 18;
+            this.btnDnsEdit.Text = "Edit";
+            this.btnDnsEdit.UseVisualStyleBackColor = true;
+            // 
             // frmMain
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(884, 542);
-            this.Controls.Add(this.mainTabs);
+            this.Controls.Add(this.toolStripContainer1);
+            this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
+            this.MainMenuStrip = this.menuStrip;
             this.MinimumSize = new System.Drawing.Size(900, 580);
             this.Name = "frmMain";
             this.Text = "Blitzkrieg";
+            this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.frmMain_FormClosing);
             this.Load += new System.EventHandler(this.OnLoad);
             this.mainTabs.ResumeLayout(false);
             this.RssTab.ResumeLayout(false);
@@ -806,6 +895,13 @@
             this.UpdDnsFreq.PerformLayout();
             this.LogGroup.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.errorProvider)).EndInit();
+            this.menuStrip.ResumeLayout(false);
+            this.menuStrip.PerformLayout();
+            this.toolStripContainer1.ContentPanel.ResumeLayout(false);
+            this.toolStripContainer1.TopToolStripPanel.ResumeLayout(false);
+            this.toolStripContainer1.TopToolStripPanel.PerformLayout();
+            this.toolStripContainer1.ResumeLayout(false);
+            this.toolStripContainer1.PerformLayout();
             this.ResumeLayout(false);
 
         }
@@ -876,6 +972,13 @@
         private System.Windows.Forms.CheckBox chkStop100;
         private System.Windows.Forms.CheckBox chkForceDownload;
         private System.Windows.Forms.ErrorProvider errorProvider;
+        private System.Windows.Forms.NotifyIcon notifyIcon;
+        private System.Windows.Forms.ToolStripContainer toolStripContainer1;
+        private System.Windows.Forms.MenuStrip menuStrip;
+        private System.Windows.Forms.ToolStripMenuItem FileMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem ExitMenuItem;
+        private System.Windows.Forms.Button btnDnsEdit;
+        public System.Windows.Forms.Button btnTorEdit;
     }
 }
 

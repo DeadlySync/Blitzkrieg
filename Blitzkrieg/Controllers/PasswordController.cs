@@ -27,6 +27,7 @@
  */
 
 using System;
+using System.Linq;
 using System.Security.Cryptography;
 using System.Text;
 
@@ -41,15 +42,9 @@ namespace Blitzkrieg.Controllers
         /// Compatibility: .NET 3.0 and later.
         /// </summary>
 
-        // The following constants may be changed without breaking existing hashes.
-        public const int SALT_BYTE_SIZE = 20;
-        public const int HASH_BYTE_SIZE = 20;
-        public const int PBKDF2_ITERATIONS = 1002;
-
-        // The following constants may NOT be changed
-        public const int ITERATION_INDEX = 0;
-        public const int SALT_INDEX = 1;
-        public const int PBKDF2_INDEX = 2;
+        private const int SALT_BYTE_SIZE = 32;
+        private const int HASH_BYTE_SIZE = 256;
+        private const int PBKDF2_ITERATIONS = 1000;
 
         /// <summary>
         /// Creates a salted PBKDF2 hash of the password.
@@ -59,7 +54,6 @@ namespace Blitzkrieg.Controllers
         public string CreateHash(string password)
         {
             byte[] salt = new byte[SALT_BYTE_SIZE];
-            char divider = ':';
 
             // Generate a random salt
             RNGCryptoServiceProvider csprng = new RNGCryptoServiceProvider();
@@ -68,14 +62,7 @@ namespace Blitzkrieg.Controllers
             // Hash the password and encode the parameters
             byte[] hash = PBKDF2(password, salt, PBKDF2_ITERATIONS, HASH_BYTE_SIZE);
 
-            StringBuilder sb = new StringBuilder();
-            sb.Append(PBKDF2_ITERATIONS);
-            sb.Append(divider);
-            sb.Append(Convert.ToBase64String(salt));
-            sb.Append(divider);
-            sb.Append(Convert.ToBase64String(hash));
-
-            return Convert.ToBase64String(Encoding.UTF8.GetBytes(sb.ToString()));
+            return Convert.ToBase64String(salt.Concat(hash).ToArray());
         }
 
         /// <summary>
@@ -86,31 +73,30 @@ namespace Blitzkrieg.Controllers
         /// <returns>True if the password is correct. False otherwise.</returns>
         public bool ValidatePassword(string password, string correctHash)
         {
-            byte[] firstDecode = Convert.FromBase64String(correctHash);
-            string secondDecode = new string(Encoding.UTF8.GetChars(firstDecode));
+            byte[] decode = Convert.FromBase64String(correctHash);
 
-            // Extract the parameters from the hash
-            char[] delimiter = { ':' };
+            byte[] salt = decode.Take(SALT_BYTE_SIZE).ToArray();
+            byte[] hash = decode.Skip(SALT_BYTE_SIZE).Take(HASH_BYTE_SIZE).ToArray();
 
-            string[] split = secondDecode.Split(delimiter);
-            int iterations = Int32.Parse(split[ITERATION_INDEX]);
-            byte[] salt = Convert.FromBase64String(split[SALT_INDEX]);
-            byte[] hash = Convert.FromBase64String(split[PBKDF2_INDEX]);
-
-            byte[] testHash = PBKDF2(password, salt, iterations, hash.Length);
+            byte[] testHash = PBKDF2(password, salt, PBKDF2_ITERATIONS, hash.Length);
             return SlowEquals(hash, testHash);
         }
 
         public string GetHash(string correctHash)
         {
-            byte[] firstDecode = Convert.FromBase64String(correctHash);
-            string secondDecode = new string(Encoding.UTF8.GetChars(firstDecode));
+            byte[] decode = Convert.FromBase64String(correctHash);
+            byte[] hash = decode.Skip(SALT_BYTE_SIZE).Take(HASH_BYTE_SIZE).ToArray();
 
-            // Extract the parameters from the hash
-            char[] delimiter = { ':' };
+            SHA256Managed sha = new SHA256Managed();
+            var hashString = sha.ComputeHash(hash);
 
-            string[] split = secondDecode.Split(delimiter);
-            return split[PBKDF2_INDEX];
+            StringBuilder sbHash = new StringBuilder();
+            foreach (var x in hashString)
+            {
+                sbHash.Append(string.Format("{0:x2}", x));
+            }
+
+            return sbHash.ToString();
         }
 
         /// <summary>

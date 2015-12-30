@@ -1,4 +1,4 @@
-﻿namespace App.Connection
+﻿namespace Blitzkrieg.Connection
 {
     public class Post
     {

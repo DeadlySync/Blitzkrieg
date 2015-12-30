@@ -13,8 +13,6 @@ namespace Blitzkrieg.Controllers
         private static SecureString gstrKey = null;
         private static CryptController crypt = null;
 
-        private static readonly string NAME = "Blitzkrieg";
-
         public void SaveUserConfig(frmMain parentForm)
         {
             try
@@ -51,153 +49,17 @@ namespace Blitzkrieg.Controllers
             }
         }
 
-        public void SaveTorConfig(frmMain parentForm)
+        public bool SaveTorConfig(frmMain parentForm)
         {
             if (crypt == null)
                 throw new Exception("User not logged on.");
 
-            parentForm.MainErrorProvider.Clear();
-            var error = false;
-            var address = parentForm.TorAddress.Text;
-            var port = parentForm.TorPort.Text;
-            var user = parentForm.TorUser.Text;
-            var pass = parentForm.TorPass.Text;
-            var update = parentForm.TorUpSeconds.Text;
-            var refresh = parentForm.TorRefresh.Text;
-
-            string url = string.Empty;
-            string fullUri = string.Empty;
-
-            #region [ Data validation ]
-
-            if (string.IsNullOrEmpty(address))
-            {
-                parentForm.MainErrorProvider.SetError(parentForm.TorAddress, "You must inform an Address.");
-                error = true;
-            }
-
-            if (string.IsNullOrEmpty(port))
-            {
-                parentForm.MainErrorProvider.SetError(parentForm.TorPort, "You must inform an Connection Port.");
-                error = true;
-            }
-            else
-            {
-                int exit = 0;
-                if (!Int32.TryParse(port, out exit))
-                {
-                    parentForm.MainErrorProvider.SetError(parentForm.TorPort, "Not a number.");
-                    error = true;
-                }
-            }
-
-            if (string.IsNullOrEmpty(user))
-            {
-                parentForm.MainErrorProvider.SetError(parentForm.TorUser, "You must inform an Username.");
-                error = true;
-            }
-
-            if (string.IsNullOrEmpty(pass))
-            {
-                parentForm.MainErrorProvider.SetError(parentForm.TorPass, "You must inform a Password.");
-                error = true;
-            }
-
-            if (string.IsNullOrEmpty(update))
-            {
-                parentForm.MainErrorProvider.SetError(parentForm.TorUpSeconds, "You must inform a RSS Update Frequency.");
-                error = true;
-            }
-            else
-            {
-                int exit = 0;
-                if (!Int32.TryParse(update, out exit))
-                {
-                    parentForm.MainErrorProvider.SetError(parentForm.TorUpSeconds, "Not a number.");
-                    error = true;
-                }
-                else
-                {
-                    if (exit < 1)
-                    {
-                        parentForm.MainErrorProvider.SetError(parentForm.TorUpSeconds, "Minimum acceptable value is 1 (one) minute.");
-                        error = true;
-                    }
-                }
-            }
-
-            if (string.IsNullOrEmpty(refresh))
-            {
-                parentForm.MainErrorProvider.SetError(parentForm.TorRefresh, "You must inform a Refresh Rate for uTorrent.");
-                error = true;
-            }
-            else
-            {
-                int exit = 0;
-                if (!Int32.TryParse(refresh, out exit))
-                {
-                    parentForm.MainErrorProvider.SetError(parentForm.TorRefresh, "Not a number.");
-                    error = true;
-                }
-                else
-                {
-                    if (exit < 5)
-                    {
-                        parentForm.MainErrorProvider.SetError(parentForm.TorRefresh, "Minimum acceptable value is 5 (five) seconds.");
-                        error = true;
-                    }
-                }
-            }
-
-            if (error)
-                return;
-
-            if (!string.IsNullOrEmpty(address) && !string.IsNullOrEmpty(port))
-            {
-                if (address.StartsWith("http://"))
-                    error = false;
-                else
-                {
-                    if (address.StartsWith("https://"))
-                    {
-                        error = false;
-                    }
-                    else
-                    {
-                        parentForm.MainErrorProvider.SetError(parentForm.TorAddress, "You must inform http:// or https://");
-                        error = true;
-                        return;
-                    }
-                }
-
-                if (address.StartsWith("http://"))
-                {
-                    fullUri = "http://" + user + ":" + pass + "@" + address.Substring(0, 7) + ":" + port + "/gui";
-                }
-                else if (address.StartsWith("https://"))
-                {
-                    fullUri = "https://" + user + ":" + pass + "@" + address.Substring(0, 7) + ":" + port + "/gui";
-                }
-
-                Uri uriResult;
-                bool result = Uri.TryCreate(fullUri, UriKind.Absolute, out uriResult)
-                    && (uriResult.Scheme == Uri.UriSchemeHttp || uriResult.Scheme == Uri.UriSchemeHttps);
-
-                if (!result)
-                {
-                    parentForm.MainErrorProvider.SetError(parentForm.TorAddress, "Invalid URL. Please check.");
-                    return;
-                }
-                else
-                    url = fullUri;
-            }
-
-            #endregion [ Data validation ]
+            if (parentForm.TorObject == null)
+                return false;
 
             using (var context = new dataEntities())
             {
-                parentForm.Text += " - Saving...";
-                parentForm.Update();
+                parentForm.ChangeNameStatus(" - Saving...");
 
                 bool isNew = false;
                 var torConfig = context.TorrentClient.OrderByDescending(t => t.DateAdd).FirstOrDefault();
@@ -209,18 +71,22 @@ namespace Blitzkrieg.Controllers
                     isNew = true;
                 }
                 else
-                    torConfig.DateUpdate = DateTime.Now;
-                //TODO: check how to handle "save" misspress and "update";
+                {
+                    if (parentForm.TorObject.TorPass == torConfig.Password.Substring(0, 6))
+                        return false;
+                    else
+                        torConfig.DateUpdate = DateTime.Now;
+                }
 
-                torConfig.FullUri = crypt.Encrypt(url, gstrKey);
-                torConfig.Address = crypt.Encrypt(address, gstrKey);
-                torConfig.Port = Convert.ToInt64(port);
-                torConfig.Username = crypt.Encrypt(user, gstrKey);
-                torConfig.Password = crypt.Encrypt(pass, gstrKey);
-                torConfig.IsForceDown = parentForm.TorChkForceDown.Checked;
-                torConfig.IsStop100 = parentForm.TorChkStop100.Checked;
-                torConfig.UpdateRate = Convert.ToInt64(update);
-                torConfig.RefreshRate = Convert.ToInt64(refresh);
+                torConfig.FullUri = crypt.Encrypt(parentForm.TorObject.uTorFullUrl, gstrKey);
+                torConfig.Address = crypt.Encrypt(parentForm.TorObject.TorAddress, gstrKey);
+                torConfig.Port = Convert.ToInt64(parentForm.TorObject.TorPort);
+                torConfig.Username = crypt.Encrypt(parentForm.TorObject.TorUser, gstrKey);
+                torConfig.Password = crypt.Encrypt(parentForm.TorObject.TorPass, gstrKey);
+                torConfig.IsForceDown = parentForm.TorObject.TorChkForceDown;
+                torConfig.IsStop100 = parentForm.TorObject.TorChkStop100;
+                torConfig.UpdateRate = Convert.ToInt64(parentForm.TorObject.TorUpSeconds);
+                torConfig.RefreshRate = Convert.ToInt64(parentForm.TorObject.TorRefresh);
 
                 if (isNew)
                     context.TorrentClient.Add(torConfig);
@@ -228,8 +94,9 @@ namespace Blitzkrieg.Controllers
                 context.SaveChanges();
             }
 
-            parentForm.Text = NAME;
-            parentForm.Update();
+            parentForm.ChangeNameStatus();
+
+            return true;
         }
 
         public void SavePassword(string hash)
@@ -264,6 +131,18 @@ namespace Blitzkrieg.Controllers
 
             using (var entities = new dataEntities())
             {
+                //check if there is any feed with the same priority
+                var feeds = entities.RssFeeds.FirstOrDefault(f => f.FeedPriority == feedForm.FeedPriority);
+                if (feeds != null)
+                {
+                    var lastFeed = entities.RssFeeds.OrderByDescending(f => f.FeedPriority).FirstOrDefault();
+                    if (lastFeed != null)
+                        feeds.FeedPriority = lastFeed.FeedPriority + 1;
+
+                    entities.SaveChanges();
+                }
+
+                //create new feed
                 var feed = new RssFeeds();
 
                 feed.FeedAlias = crypt.Encrypt(feedForm.FeedAlias, gstrKey);
@@ -303,36 +182,22 @@ namespace Blitzkrieg.Controllers
 
                             parentForm.RssTreeView.ExpandAll();
 
-                            parentForm.Text = NAME;
+                            parentForm.ChangeNameStatus();
 
                         }));
                     }
                 }
                 catch (Exception ex)
                 {
-                    MessageBox.Show(parentForm, ex.Message, "Application Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                    Application.Exit();
+                    MessageBox.Show(parentForm, "This Application will now close. \r\nReason: " + ex.Message, 
+                        "Application Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    parentForm.ExitMenuItem_Click(null, null);
                 }
             }));
 
             thread.Name = "Load Feeds";
             thread.IsBackground = true;
             thread.Start();
-        }
-
-        public int CountFeeds()
-        {
-            try
-            {
-                using (var context = new dataEntities())
-                {
-                    return context.RssFeeds.Count();
-                }
-            }
-            catch
-            {
-                return 0;
-            }
         }
 
         public void LoadSystem(frmMain parentForm)
@@ -361,14 +226,15 @@ namespace Blitzkrieg.Controllers
                             if (conf.ScreenWidth != null)
                                 parentForm.Width = (int)conf.ScreenWidth;
 
-                            parentForm.Text = NAME;
+                            parentForm.ChangeNameStatus();
                         }));
                     }
                 }
                 catch (Exception ex)
                 {
-                    MessageBox.Show(parentForm, ex.Message, "Application Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                    Application.Exit();
+                    MessageBox.Show(parentForm, "This Application will now close. \r\nReason: " + ex.Message,
+                        "Application Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    parentForm.ExitMenuItem_Click(null, null);
                 }
             }));
 
@@ -377,47 +243,45 @@ namespace Blitzkrieg.Controllers
             thread.Start();
         }
 
-        public void LoadTorConfig(frmMain parentForm)
+        public bool LoadTorConfig(frmMain parentForm)
         {
-            var thread = new Thread(new ThreadStart(() =>
+            try
             {
-                try
+                if (crypt == null)
+                    throw new Exception("User not logged in.");
+
+                using (var context = new dataEntities())
                 {
-                    if (crypt == null)
-                        throw new Exception("User not logged in.");
+                    var torConfig = context.TorrentClient.OrderByDescending(c => c.DateAdd).FirstOrDefault();
 
-                    using (var context = new dataEntities())
-                    {
-                        var torConfig = context.TorrentClient.OrderByDescending(c => c.DateAdd).FirstOrDefault();
+                    if (torConfig == null)
+                        return false;
 
-                        if (torConfig == null)
-                            return;
+                    if (parentForm.TorObject == null)
+                        parentForm.TorObject = new uTorrentObject();
 
-                        parentForm.Invoke(new Action(() =>
-                        {
-                            parentForm.TorAddress.Text = crypt.Decrypt(torConfig.Address, gstrKey);
-                            parentForm.TorPort.Text = torConfig.Port.ToString();
-                            parentForm.TorUser.Text = crypt.Decrypt(torConfig.Username, gstrKey);
-                            parentForm.TorPass.Text = torConfig.Password.Substring(0, 6); //fake pass
-                            parentForm.TorChkForceDown.Checked = torConfig.IsForceDown.Value;
-                            parentForm.TorChkStop100.Checked = torConfig.IsStop100.Value;
-                            parentForm.TorUpSeconds.Text = torConfig.UpdateRate.ToString();
-                            parentForm.TorRefresh.Text = torConfig.RefreshRate.ToString();
+                    parentForm.TorObject.TorAddress = crypt.Decrypt(torConfig.Address, gstrKey);
+                    parentForm.TorObject.TorPort = torConfig.Port.ToString();
+                    parentForm.TorObject.TorUser = crypt.Decrypt(torConfig.Username, gstrKey);
+                    parentForm.TorObject.TorPass = torConfig.Password.Substring(0, 6); //fake pass
+                    parentForm.TorObject.TorChkForceDown = torConfig.IsForceDown.Value;
+                    parentForm.TorObject.TorChkStop100 = torConfig.IsStop100.Value;
+                    parentForm.TorObject.TorUpSeconds = torConfig.UpdateRate.ToString();
+                    parentForm.TorObject.TorRefresh = torConfig.RefreshRate.ToString();
 
-                            parentForm.Text = NAME;
-                        }));
-                    }
+                    parentForm.uTorFullUrl = torConfig.FullUri;
+
+                    parentForm.ChangeNameStatus();
                 }
-                catch (Exception ex)
-                {
-                    MessageBox.Show(parentForm, ex.Message, "Application Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                    Application.Exit();
-                }
-            }));
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(parentForm, "This Application will now close. \r\nReason: " + ex.Message,
+                        "Application Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                parentForm.ExitMenuItem_Click(null, null);
+            }
 
-            thread.Name = "Load uTorrent Config";
-            thread.IsBackground = true;
-            thread.Start();
+            return true;
         }
 
         public bool LoadPassword()
@@ -484,6 +348,21 @@ namespace Blitzkrieg.Controllers
                 }
 
                 return isValid;
+            }
+        }
+
+        public int CountFeeds()
+        {
+            try
+            {
+                using (var context = new dataEntities())
+                {
+                    return context.RssFeeds.Count();
+                }
+            }
+            catch
+            {
+                return 0;
             }
         }
     }

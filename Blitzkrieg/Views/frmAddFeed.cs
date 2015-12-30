@@ -28,8 +28,6 @@ namespace Blitzkrieg.Views
 
         private void btnEditFeedSave_Click(object sender, EventArgs e)
         {
-            //TODO: Check how to handle SAME PRIORITY Rss Feeds.
-
             FeedAddress = txtAddress.Text;
             FeedAlias = txtAlias.Text;
             FeedPriority = Convert.ToInt32(cboPriority.SelectedItem.ToString());

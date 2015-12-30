@@ -1,10 +1,13 @@
 ﻿using System;
+using System.Linq;
 using System.IO;
 using System.IO.Compression;
 using System.Net;
 using System.Xml;
+using System.Text;
+using HtmlAgilityPack;
 
-namespace App.Connection
+namespace Blitzkrieg.Connection
 {
     public class DownloadFeed
     {
@@ -33,6 +36,36 @@ namespace App.Connection
             }
         }
 
+        /// <summary>
+        /// Downloads a Favicon from any website.
+        /// <para>It searchs and downloads only the first Favicon entry.</para>
+        /// </summary>
+        /// <param name="uri">Any Valid URL</param>
+        /// <returns>Byte array Base64 Encoded Image or Icon</returns>
+        public string DownloadFavicon(string uri)
+        {
+            var type = uri.Substring(0, uri.IndexOf("//") + 2);
+            var newUri = uri.Substring(uri.IndexOf("//") + 2);
+                newUri = newUri.Substring(0, newUri.IndexOf("/"));
+
+            HtmlWeb hw = new HtmlWeb();
+            HtmlDocument doc = hw.Load(type + newUri);
+            foreach (HtmlNode link in doc.DocumentNode.Descendants("link"))
+            {
+                if (link.GetAttributeValue("rel", null).Contains("icon"))
+                {
+                    var favicon = link.GetAttributeValue("href", null);
+                    if(favicon != null)
+                    {
+                        var client = new WebClient();
+                        return Convert.ToBase64String(client.DownloadData(favicon));
+                    }
+                }
+            }
+
+            return string.Empty;
+        }
+
         public Stream DeflateGZipStream(Stream stream)
         {
             try
@@ -42,6 +75,20 @@ namespace App.Connection
             catch
             {
                 return stream;
+            }
+        }
+
+        public byte[] StreamToByteArr(Stream input)
+        {
+            byte[] buffer = new byte[16 * 1024];
+            using (MemoryStream ms = new MemoryStream())
+            {
+                int read;
+                while ((read = input.Read(buffer, 0, buffer.Length)) > 0)
+                {
+                    ms.Write(buffer, 0, read);
+                }
+                return ms.ToArray();
             }
         }
     }
