@@ -1,11 +1,9 @@
-﻿using System;
-using System.Linq;
+﻿using HtmlAgilityPack;
+using System;
 using System.IO;
 using System.IO.Compression;
 using System.Net;
-using System.Xml;
 using System.Text;
-using HtmlAgilityPack;
 using System.Text.RegularExpressions;
 
 namespace Blitzkrieg.Connection

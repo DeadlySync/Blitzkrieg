@@ -17,11 +17,16 @@ namespace Blitzkrieg.Controllers
         private static SecureString gstrKey = null;
         private static CryptController crypt = null;
 
+        private static string connectionString = 
+            "metadata=res://*/DataBase.Database.csdl|res://*/DataBase.Database.ssdl|res://*/DataBase.Database.msl;" + 
+            "provider=System.Data.SQLite.EF6;" + 
+            "provider connection string=\"data source=" + Application.StartupPath + "\\DataBase\\data.sqlite\"";
+
         public void SaveUserConfig(frmMain parentForm)
         {
             try
             {
-                using (var context = new dataEntities())
+                using (var context = new dataEntities(connectionString))
                 {
                     bool isNew = false;
                     var conf = context.UserConfig.OrderByDescending(c => c.DateAdd).FirstOrDefault();
@@ -61,7 +66,7 @@ namespace Blitzkrieg.Controllers
             if (parentForm.TorObject == null)
                 return false;
 
-            using (var context = new dataEntities())
+            using (var context = new dataEntities(connectionString))
             {
                 parentForm.ChangeNameStatus(" - Saving...");
 
@@ -105,7 +110,7 @@ namespace Blitzkrieg.Controllers
 
         public void SavePassword(string hash)
         {
-            using (var context = new dataEntities())
+            using (var context = new dataEntities(connectionString))
             {
                 var conf = context.UserConfig.OrderByDescending(c => c.DateAdd).FirstOrDefault();
 
@@ -133,7 +138,7 @@ namespace Blitzkrieg.Controllers
             if (crypt == null)
                 throw new Exception("User not logged on.");
 
-            using (var entities = new dataEntities())
+            using (var entities = new dataEntities(connectionString))
             {
                 //check if there is any feed with the same priority
                 var feeds = entities.RssFeeds.FirstOrDefault(f => f.FeedPriority == feedForm.FeedPriority);
@@ -186,7 +191,7 @@ namespace Blitzkrieg.Controllers
                 if (crypt == null)
                     throw new Exception("User not logged in.");
 
-                using (var context = new dataEntities())
+                using (var context = new dataEntities(connectionString))
                 {
                     var rssFeeds = context.RssFeeds.FirstOrDefault(f => f.Id == feedIndex);
 
@@ -215,7 +220,7 @@ namespace Blitzkrieg.Controllers
                     if (crypt == null)
                         throw new Exception("User not logged in.");
 
-                    using (var context = new dataEntities())
+                    using (var context = new dataEntities(connectionString))
                     {
                         var feeds = context.RssFeeds.OrderBy(f => f.FeedPriority).ToList();
 
@@ -270,7 +275,7 @@ namespace Blitzkrieg.Controllers
 
         public List<RssFeeds> LoadFeeds()
         {
-            using (var context = new dataEntities())
+            using (var context = new dataEntities(connectionString))
             {
                 var feeds = context.RssFeeds
                             .Where(f => f.IsActive == true)
@@ -300,7 +305,7 @@ namespace Blitzkrieg.Controllers
                 if (crypt == null)
                     throw new Exception("User not logged in.");
 
-                using (var context = new dataEntities())
+                using (var context = new dataEntities(connectionString))
                 {
                     var rssFeeds = context.RssFeeds.FirstOrDefault(f => f.Id == feedIndex);
 
@@ -335,7 +340,7 @@ namespace Blitzkrieg.Controllers
 
             if (feeds != null && feeds.Count > 0)
             {
-                using (var context = new dataEntities())
+                using (var context = new dataEntities(connectionString))
                 {
                     List<FeedItems> list = new List<FeedItems>();
                     var except = context.FeedItems.Select(db => db.Link).ToList();
@@ -378,7 +383,7 @@ namespace Blitzkrieg.Controllers
         /// <returns>Returns a List of Parsed Feed Data called "Post"</returns>
         public List<Post> LoadFeedItems()
         {
-            using (var context = new dataEntities())
+            using (var context = new dataEntities(connectionString))
             {
                 return context.FeedItems
                     .Select(f => new Post
@@ -400,7 +405,7 @@ namespace Blitzkrieg.Controllers
             {
                 try
                 {
-                    using (var context = new dataEntities())
+                    using (var context = new dataEntities(connectionString))
                     {
                         var conf = context.UserConfig.OrderByDescending(c => c.DateAdd).FirstOrDefault();
 
@@ -444,7 +449,7 @@ namespace Blitzkrieg.Controllers
                 if (crypt == null)
                     throw new Exception("User not logged in.");
 
-                using (var context = new dataEntities())
+                using (var context = new dataEntities(connectionString))
                 {
                     var torConfig = context.TorrentClient.OrderByDescending(c => c.DateAdd).FirstOrDefault();
 
@@ -482,7 +487,7 @@ namespace Blitzkrieg.Controllers
         {
             try
             {
-                using (var context = new dataEntities())
+                using (var context = new dataEntities(connectionString))
                 {
                     var password = context.UserConfig.Where(p => p.Password != null).Select(p => p.Password).FirstOrDefault();
 
@@ -506,7 +511,7 @@ namespace Blitzkrieg.Controllers
 
             PasswordController pc = null;
 
-            using (var context = new dataEntities())
+            using (var context = new dataEntities(connectionString))
             {
                 var password = context.UserConfig.Where(p => p != null).Select(p => p.Password).FirstOrDefault();
 
@@ -549,7 +554,7 @@ namespace Blitzkrieg.Controllers
         {
             try
             {
-                using (var context = new dataEntities())
+                using (var context = new dataEntities(connectionString))
                 {
                     return context.RssFeeds.Count();
                 }

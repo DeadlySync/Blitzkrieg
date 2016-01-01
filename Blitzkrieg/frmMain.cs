@@ -18,6 +18,9 @@ namespace Blitzkrieg
     */
     public partial class frmMain : Form
     {
+
+        //TODO: CODE DOCUMENTATION
+
         private static readonly string NAME = "Blitzkrieg";
         private bool UserClickedExit = false;
 
@@ -27,8 +30,6 @@ namespace Blitzkrieg
 
         public frmMain()
         {
-            //TODO: CHECK THIS DAMN DATABASE ADDRESS!
-            //TODO: Check what to display on main Grid.
             dbController = new DatabaseController();
             InitializeComponent();
         }
@@ -37,6 +38,8 @@ namespace Blitzkrieg
         public TreeView RssTreeView { get { return this.FeedsTree; } }
         public TabControl MainTabControl { get { return this.mainTabs; } }
         public string uTorFullUrl { get; set; }
+
+        #region [ Events ]
 
         private void OnLoad(object sender, EventArgs e)
         {
@@ -99,6 +102,43 @@ namespace Blitzkrieg
             dbController.LoadFeedTree(this);
             StartFeedUpdateTimer();
         }
+
+        private void feedsContextMenu_Opening(object sender, System.ComponentModel.CancelEventArgs e)
+        {
+            if (this.FeedsTree.SelectedNode.Name == "FeedsRoot")
+            {
+                this.feedsContextMenu.Items["editFeedToolStripMenuItem"].Enabled = false;
+                this.feedsContextMenu.Items["deleteFeedToolStripMenuItem"].Enabled = false;
+            }
+            else
+            {
+                this.feedsContextMenu.Items["editFeedToolStripMenuItem"].Enabled = true;
+                this.feedsContextMenu.Items["deleteFeedToolStripMenuItem"].Enabled = true;
+            }
+        }
+
+        private void RssItemGrid_RowPostPaint(object sender, DataGridViewRowPostPaintEventArgs e)
+        {
+            //TODO: make it check for Downloaded flag!
+            if (!(sender is DataGridView))
+                return;
+
+            var dgv = (DataGridView)sender;
+            var data = dgv.DataSource;
+
+            var graphics = e.Graphics;
+            var icon = rssGridImageList.Images[1];
+
+            int xPosition = e.RowBounds.X;
+            int yPosition = e.RowBounds.Y + ((dgv.Rows[e.RowIndex].Height - icon.Height) / 2);
+
+            var rectangle = new System.Drawing.Rectangle(xPosition, yPosition, icon.Width, icon.Height);
+            graphics.DrawImage(icon, rectangle);
+        }
+
+        #endregion [ Events ]
+
+        #region [ Interface Clicks ]
 
         private void btnAddFeed_Click(object sender, EventArgs e)
         {
@@ -304,110 +344,6 @@ namespace Blitzkrieg
             }
         }
 
-        private void StartFeedUpdateTimer()
-        {
-            if (string.IsNullOrEmpty(TorObject.TorUpSeconds))
-                return;
-
-            if (dbController.CountFeeds() == 0)
-                return;
-
-            if (UpdateFeedTimer == null)
-            {
-                var time = TimeSpan.FromMinutes(double.Parse(TorObject.TorUpSeconds));
-                var totalTime = int.Parse(TorObject.TorUpSeconds) * 60;
-
-                UpdateFeedTimer = new Timer();
-                UpdateFeedTimer.Interval = (int)time.TotalMilliseconds;
-                UpdateFeedTimer.Tick += (sender, ev) =>
-                {
-                    totalTime = int.Parse(TorObject.TorUpSeconds) * 60;
-                    LoadDataGrid();
-                };
-                UpdateFeedTimer.Start();
-
-                RegressiveTimer = new Timer();
-                RegressiveTimer.Interval = 1000;
-                RegressiveTimer.Tick += (sender, ev) =>
-                {
-                    this.Invoke(new Action(() => 
-                    {
-                        this.lblTimerUpdate.Text = "Next Feed Update: " + totalTime + " seconds.";
-                        this.Update();
-                    }));
-                    totalTime--;
-                };
-                RegressiveTimer.Start();
-
-            }
-            else
-            {
-                UpdateFeedTimer.Stop();
-                UpdateFeedTimer.Start();
-            }
-        }
-
-        private void LoadDataGrid()
-        {
-            var thread = new System.Threading.Thread(() =>
-            {
-                ChangeNameStatus(" - Downlaoding Feed Updates...");
-                dbController.SaveFeedItems();
-
-                this.Invoke(new Action(() =>
-                {
-                    var data2 = dbController.LoadFeedItems();
-
-                    SortableBindingList<Post> sbl2 = new SortableBindingList<Post>(data2);
-                    this.RssItemGrid.DataSource = sbl2;
-
-                    ChangeNameStatus();
-
-                    this.Update();
-                }));
-
-            });
-
-            thread.IsBackground = true;
-            thread.Name = "Update Feeds";
-            thread.Start();
-
-        }
-
-        public void EnableDisableControllers(object parentControl, bool enable)
-        {
-            var controls = parentControl.GetType().GetProperties().FirstOrDefault(p => p.Name == "Controls");
-            IEnumerable controlList = (IEnumerable)controls.GetValue(parentControl, null);
-
-            foreach (var item in controlList)
-            {
-                if (item is GroupBox)
-                    EnableDisableControllers(item, enable);
-                else
-                    ((Control)item).Enabled = enable;
-            }
-
-            this.Update();
-        }
-
-        public void ChangeNameStatus(string Status = "")
-        {
-            this.Invoke(new Action(() =>
-            {
-                if (string.IsNullOrEmpty(Status))
-                    this.Text = NAME;
-                else
-                {
-                    this.Text = NAME;
-                    this.Update();
-
-                    this.Text += Status;
-                }
-
-                this.Update();
-            }));
-        }
-
         private void btnAddDomain_Click(object sender, EventArgs e)
         {
             //TODO: Add DNS domain. http://www.codeproject.com/Articles/34650/How-to-use-the-Windows-NLM-API-to-get-notified-of
@@ -446,6 +382,8 @@ namespace Blitzkrieg
 
         private void btnAddFilter_Click(object sender, EventArgs e)
         {
+            //TODO: Add RSS Filters
+            //TODO: Create RSS Filter Screen
             //TODO: Create RSS Filter Engine.
 
         }
@@ -526,41 +464,119 @@ namespace Blitzkrieg
             btnAddFeed_Click(sender, e);
         }
 
-        private void feedsContextMenu_Opening(object sender, System.ComponentModel.CancelEventArgs e)
-        {
-            if (this.FeedsTree.SelectedNode.Name == "FeedsRoot")
-            {
-                this.feedsContextMenu.Items["editFeedToolStripMenuItem"].Enabled = false;
-                this.feedsContextMenu.Items["deleteFeedToolStripMenuItem"].Enabled = false;
-            }
-            else
-            {
-                this.feedsContextMenu.Items["editFeedToolStripMenuItem"].Enabled = true;
-                this.feedsContextMenu.Items["deleteFeedToolStripMenuItem"].Enabled = true;
-            }
-        }
-
-        private void RssItemGrid_RowPostPaint(object sender, DataGridViewRowPostPaintEventArgs e)
-        {
-            if (!(sender is DataGridView))
-                return;
-
-            var dgv = (DataGridView)sender;
-            var data = dgv.DataSource;
-
-            var graphics = e.Graphics;
-            var icon = rssGridImageList.Images[1];
-
-            int xPosition = e.RowBounds.X;
-            int yPosition = e.RowBounds.Y + ((dgv.Rows[e.RowIndex].Height - icon.Height) / 2);
-
-            var rectangle = new System.Drawing.Rectangle(xPosition, yPosition, icon.Width, icon.Height);
-            graphics.DrawImage(icon, rectangle);
-        }
-
         private void updateFeedsToolStripMenuItem_Click(object sender, EventArgs e)
         {
             this.LoadDataGrid();
         }
+
+        #endregion [ Interface Clicks ]
+
+        #region [ Private Methods ]
+
+        private void StartFeedUpdateTimer()
+        {
+            if (string.IsNullOrEmpty(TorObject.TorUpSeconds))
+                return;
+
+            if (dbController.CountFeeds() == 0)
+                return;
+
+            if (UpdateFeedTimer == null)
+            {
+                var time = TimeSpan.FromMinutes(double.Parse(TorObject.TorUpSeconds));
+                var totalTime = int.Parse(TorObject.TorUpSeconds) * 60;
+
+                UpdateFeedTimer = new Timer();
+                UpdateFeedTimer.Interval = (int)time.TotalMilliseconds;
+                UpdateFeedTimer.Tick += (sender, ev) =>
+                {
+                    totalTime = int.Parse(TorObject.TorUpSeconds) * 60;
+                    LoadDataGrid();
+                };
+                UpdateFeedTimer.Start();
+
+                RegressiveTimer = new Timer();
+                RegressiveTimer.Interval = 1000;
+                RegressiveTimer.Tick += (sender, ev) =>
+                {
+                    this.Invoke(new Action(() =>
+                    {
+                        this.lblTimerUpdate.Text = "Next Feed Update: " + totalTime + " seconds.";
+                        this.Update();
+                    }));
+                    totalTime--;
+                };
+                RegressiveTimer.Start();
+
+            }
+            else
+            {
+                UpdateFeedTimer.Stop();
+                UpdateFeedTimer.Start();
+            }
+        }
+
+        private void LoadDataGrid()
+        {
+            var thread = new System.Threading.Thread(() =>
+            {
+                ChangeNameStatus(" - Downlaoding Feed Updates...");
+                dbController.SaveFeedItems();
+
+                this.Invoke(new Action(() =>
+                {
+                    var data2 = dbController.LoadFeedItems();
+
+                    SortableBindingList<Post> sbl2 = new SortableBindingList<Post>(data2);
+                    this.RssItemGrid.DataSource = sbl2;
+
+                    ChangeNameStatus();
+
+                    this.Update();
+                }));
+
+            });
+
+            thread.IsBackground = true;
+            thread.Name = "Update Feeds";
+            thread.Start();
+
+        }
+
+        public void EnableDisableControllers(object parentControl, bool enable)
+        {
+            var controls = parentControl.GetType().GetProperties().FirstOrDefault(p => p.Name == "Controls");
+            IEnumerable controlList = (IEnumerable)controls.GetValue(parentControl, null);
+
+            foreach (var item in controlList)
+            {
+                if (item is GroupBox)
+                    EnableDisableControllers(item, enable);
+                else
+                    ((Control)item).Enabled = enable;
+            }
+
+            this.Update();
+        }
+
+        public void ChangeNameStatus(string Status = "")
+        {
+            this.Invoke(new Action(() =>
+            {
+                if (string.IsNullOrEmpty(Status))
+                    this.Text = NAME;
+                else
+                {
+                    this.Text = NAME;
+                    this.Update();
+
+                    this.Text += Status;
+                }
+
+                this.Update();
+            }));
+        }
+
+        #endregion [ Private Methods ]
     }
 }

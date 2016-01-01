@@ -20,6 +20,8 @@ namespace Blitzkrieg.DataBase
         {
         }
     
+    	public dataEntities(string connectionString) : base(connectionString){    }
+    
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
         {
             throw new UnintentionalCodeFirstException();

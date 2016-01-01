@@ -33,15 +33,14 @@ using System.Text;
 
 namespace Blitzkrieg.Controllers
 {
+    /// <summary>
+    /// Salted password hashing with PBKDF2-SHA1.
+    /// Author: havoc AT defuse.ca
+    /// www: http://crackstation.net/hashing-security.htm
+    /// Compatibility: .NET 3.0 and later.
+    /// </summary>
     public class PasswordController
     {
-        /// <summary>
-        /// Salted password hashing with PBKDF2-SHA1.
-        /// Author: havoc AT defuse.ca
-        /// www: http://crackstation.net/hashing-security.htm
-        /// Compatibility: .NET 3.0 and later.
-        /// </summary>
-
         private const int SALT_BYTE_SIZE = 32;
         private const int HASH_BYTE_SIZE = 256;
         private const int PBKDF2_ITERATIONS = 1000;
