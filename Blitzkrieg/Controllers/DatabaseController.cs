@@ -1,6 +1,10 @@
-﻿using Blitzkrieg.DataBase;
+﻿using Blitzkrieg.Connection;
+using Blitzkrieg.DataBase;
 using Blitzkrieg.Views;
 using System;
+using System.Collections.Generic;
+using System.Drawing;
+using System.IO;
 using System.Linq;
 using System.Security;
 using System.Threading;
@@ -142,6 +146,24 @@ namespace Blitzkrieg.Controllers
                     entities.SaveChanges();
                 }
 
+                //check for feed update
+                if (feedForm.FeedIndex > -1)
+                {
+                    var upFeed = entities.RssFeeds.FirstOrDefault(f => f.Id == feedForm.FeedIndex);
+                    if (upFeed != null)
+                    {
+                        upFeed.FeedAlias = crypt.Encrypt(feedForm.FeedAlias, gstrKey);
+                        upFeed.FeedUrl = crypt.Encrypt(feedForm.FeedAddress, gstrKey);
+                        upFeed.IsActive = feedForm.IsActive;
+                        upFeed.FeedPriority = feedForm.FeedPriority;
+                        upFeed.DateUpdate = DateTime.Now;
+                        upFeed.FeedIcon = feedForm.FeedIcon;
+
+                        entities.SaveChanges();
+                        return;
+                    }
+                }
+
                 //create new feed
                 var feed = new RssFeeds();
 
@@ -150,9 +172,36 @@ namespace Blitzkrieg.Controllers
                 feed.IsActive = feedForm.IsActive;
                 feed.FeedPriority = feedForm.FeedPriority;
                 feed.DateAdd = DateTime.Now;
+                feed.FeedIcon = feedForm.FeedIcon;
 
                 entities.RssFeeds.Add(feed);
                 entities.SaveChanges();
+            }
+        }
+
+        public void DeleteFeed(frmMain parentForm, int feedIndex)
+        {
+            try
+            {
+                if (crypt == null)
+                    throw new Exception("User not logged in.");
+
+                using (var context = new dataEntities())
+                {
+                    var rssFeeds = context.RssFeeds.FirstOrDefault(f => f.Id == feedIndex);
+
+                    if (rssFeeds == null)
+                        return;
+
+                    context.RssFeeds.Remove(rssFeeds);
+                    context.SaveChanges();
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(parentForm, "This Application will now close. \r\nReason: " + ex.Message,
+                        "Application Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                Environment.Exit(1);
             }
         }
 
@@ -177,7 +226,26 @@ namespace Blitzkrieg.Controllers
                         {
                             foreach (var item in feeds)
                             {
-                                parentForm.RssTreeView.Nodes[0].Nodes.Add(crypt.Decrypt(item.FeedAlias, gstrKey));
+                                if (!parentForm.feedImageList.Images.ContainsKey(item.Id.ToString()))
+                                {
+                                    using (Stream m = new MemoryStream(Convert.FromBase64String(item.FeedIcon)))
+                                    {
+                                        using (Image img = Image.FromStream(m))
+                                        {
+                                            parentForm.feedImageList.Images.Add(item.Id.ToString(), img);
+                                            m.Dispose();
+                                            img.Dispose();
+                                        }
+                                    }
+                                }
+
+                                parentForm.RssTreeView.Nodes[0].Nodes.Add(
+                                    item.Id.ToString(),
+                                    crypt.Decrypt(item.FeedAlias, gstrKey));
+
+                                var imageIndexKey = parentForm.feedImageList.Images.IndexOfKey(item.Id.ToString());
+                                parentForm.RssTreeView.Nodes[0].Nodes[item.Id.ToString()].ImageIndex = imageIndexKey;
+                                parentForm.RssTreeView.Nodes[0].Nodes[item.Id.ToString()].SelectedImageIndex = imageIndexKey;
                             }
 
                             parentForm.RssTreeView.ExpandAll();
@@ -198,6 +266,132 @@ namespace Blitzkrieg.Controllers
             thread.Name = "Load Feeds";
             thread.IsBackground = true;
             thread.Start();
+        }
+
+        public List<RssFeeds> LoadFeeds()
+        {
+            using (var context = new dataEntities())
+            {
+                var feeds = context.RssFeeds
+                            .Where(f => f.IsActive == true)
+                            .OrderBy(f => f.FeedPriority)
+                            .ToList();
+
+                var decryptFeed = feeds.Select(f => new RssFeeds
+                {
+                    FeedAlias = crypt.Decrypt(f.FeedAlias, gstrKey),
+                    FeedUrl = crypt.Decrypt(f.FeedUrl, gstrKey),
+                    FeedIcon = f.FeedIcon,
+                    FeedPriority = f.FeedPriority,
+                    DateAdd = f.DateAdd,
+                    DateUpdate = f.DateUpdate,
+                    Id = f.Id,
+                    IsActive = f.IsActive
+                }).ToList();
+
+                return decryptFeed;
+            }
+        }
+
+        public void LoadSingleFeed(frmAddFeed parentForm, int feedIndex)
+        {
+            try
+            {
+                if (crypt == null)
+                    throw new Exception("User not logged in.");
+
+                using (var context = new dataEntities())
+                {
+                    var rssFeeds = context.RssFeeds.FirstOrDefault(f => f.Id == feedIndex);
+
+                    if (rssFeeds == null)
+                        return;
+
+                    if (parentForm.RssObject == null)
+                        parentForm.RssObject = new RssFeedObject();
+
+                    parentForm.RssObject.RssAddress = crypt.Decrypt(rssFeeds.FeedUrl, gstrKey);
+                    parentForm.RssObject.RssActive = rssFeeds.IsActive == null ? false : (bool)rssFeeds.IsActive;
+                    parentForm.RssObject.RssAlias = crypt.Decrypt(rssFeeds.FeedAlias, gstrKey);
+                    parentForm.RssObject.RssPriority = (int)rssFeeds.FeedPriority;
+                    parentForm.RssObject.RssFeedIcon = rssFeeds.FeedIcon;
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(parentForm, "This Application will now close. \r\nReason: " + ex.Message,
+                        "Application Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                Environment.Exit(1);
+            }
+        }
+
+        /// <summary>
+        /// Method that Downloads all Recorded Feed Data and Parses it back.
+        /// </summary>
+        public void SaveFeedItems()
+        {
+            ReadFeed reader = new ReadFeed();
+            var feeds = LoadFeeds();
+
+            if (feeds != null && feeds.Count > 0)
+            {
+                using (var context = new dataEntities())
+                {
+                    List<FeedItems> list = new List<FeedItems>();
+                    var except = context.FeedItems.Select(db => db.Link).ToList();
+
+                    foreach (var item in feeds)
+                    {
+                        if (list.Count > 0)
+                        {
+                            except.AddRange(list.Where(f => !except.Contains(f.Link)).Select(d => d.Link));
+                        }
+
+                        list.AddRange(
+                            reader.ParseFeed(item.FeedAlias, item.FeedUrl)
+                            .Where(f => !except.Contains(f.Link))
+                            .Select(f => new FeedItems
+                            {
+                                DateAdd = DateTime.Now,
+                                FromFeed = f.FromFeed,
+                                IsDownloaded = f.Downloaded,
+                                Link = f.Link,
+                                Magnet = f.Magnet,
+                                PublishDate = f.PublishedDate,
+                                Title = f.Title
+                            }));
+                    }
+
+                    if (list.Count > 0)
+                    {
+                        context.FeedItems.AddRange(list);
+                        context.SaveChanges();
+                    }
+                }
+            }
+            reader = null;
+        }
+
+        /// <summary>
+        /// Method to Load Feed Data from Database
+        /// </summary>
+        /// <returns>Returns a List of Parsed Feed Data called "Post"</returns>
+        public List<Post> LoadFeedItems()
+        {
+            using (var context = new dataEntities())
+            {
+                return context.FeedItems
+                    .Select(f => new Post
+                {
+                    Done = "0.0%",
+                    Downloaded = f.IsDownloaded == null ? false : (bool)f.IsDownloaded,
+                    FromFeed = f.FromFeed,
+                    Link = f.Link,
+                    Magnet = f.Magnet,
+                    PublishedDate = f.PublishDate,
+                    Title = f.Title
+                }).ToList().OrderByDescending(f => f.PublishedDate).ToList();
+            }
         }
 
         public void LoadSystem(frmMain parentForm)
@@ -365,5 +559,6 @@ namespace Blitzkrieg.Controllers
                 return 0;
             }
         }
+
     }
 }

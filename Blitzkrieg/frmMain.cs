@@ -1,10 +1,10 @@
-﻿using Blitzkrieg.Controllers;
+﻿using Blitzkrieg.Connection;
+using Blitzkrieg.Controllers;
 using Blitzkrieg.DataBase;
 using Blitzkrieg.Views;
 using System;
 using System.Collections;
 using System.Linq;
-using System.Reflection;
 using System.Windows.Forms;
 
 namespace Blitzkrieg
@@ -19,14 +19,16 @@ namespace Blitzkrieg
     public partial class frmMain : Form
     {
         private static readonly string NAME = "Blitzkrieg";
-        private DatabaseController dbController = null;
         private bool UserClickedExit = false;
+
+        private DatabaseController dbController = null;
+        private Timer UpdateFeedTimer = null;
+        private Timer RegressiveTimer = null;
 
         public frmMain()
         {
             //TODO: CHECK THIS DAMN DATABASE ADDRESS!
             //TODO: Check what to display on main Grid.
-            //TODO: Add context menu to TreeView for editing feeds.
             dbController = new DatabaseController();
             InitializeComponent();
         }
@@ -34,13 +36,12 @@ namespace Blitzkrieg
         public uTorrentObject TorObject { get; set; }
         public TreeView RssTreeView { get { return this.FeedsTree; } }
         public TabControl MainTabControl { get { return this.mainTabs; } }
-
         public string uTorFullUrl { get; set; }
 
         private void OnLoad(object sender, EventArgs e)
         {
             TorObject = new uTorrentObject();
-            
+
             //uTorrent DataBind
             this.txtAddress.DataBindings.Add(new Binding("Text", TorObject, "TorAddress"));
             this.txtPort.DataBindings.Add(new Binding("Text", TorObject, "TorPort"));
@@ -66,39 +67,43 @@ namespace Blitzkrieg
             if (sender is bool)
                 isLoggedIn = (bool)sender;
 
-            if (isLoggedIn)
+            if (!isLoggedIn)
+                return;
+
+            ChangeNameStatus(" - Loading...");
+
+            dbController.LoadSystem(this);
+            dbController.LoadFeedTree(this);
+
+            if (dbController.LoadTorConfig(this))
             {
-                ChangeNameStatus(" - Loading...");
-
-                dbController.LoadSystem(this);
-                dbController.LoadFeedTree(this);
-
-                if (dbController.LoadTorConfig(this))
-                {
-                    EnableDisableControllers(this.mainTabs.TabPages["uTorTab"], false);
-                    this.btnTorSave.Enabled = false;
-                    this.btnTorEdit.Visible = true;
-                    this.btnTorEdit.Enabled = true;
-                    this.Update();
-                }
-                else
-                {
-                    this.btnTorSave.Enabled = true;
-                    this.btnTorEdit.Enabled = false;
-                    this.btnTorEdit.Visible = false;
-                    this.Update();
-                }
+                EnableDisableControllers(this.mainTabs.TabPages["uTorTab"], false);
+                this.btnTorSave.Enabled = false;
+                this.btnTorEdit.Visible = true;
+                this.btnTorEdit.Enabled = true;
+                LoadDataGrid();
+                this.Update();
+                StartFeedUpdateTimer();
+            }
+            else
+            {
+                this.btnTorSave.Enabled = true;
+                this.btnTorEdit.Enabled = false;
+                this.btnTorEdit.Visible = false;
+                this.Update();
             }
         }
 
         private void OnAddFeedFinished(object sender, EventArgs e)
         {
             dbController.LoadFeedTree(this);
+            StartFeedUpdateTimer();
         }
 
         private void btnAddFeed_Click(object sender, EventArgs e)
         {
             frmAddFeed frm = new frmAddFeed();
+            frm.FeedImageList = this.feedImageList;
             frm.OnClosedForm += OnAddFeedFinished;
             frm.ShowDialog(this);
             frm.Dispose();
@@ -225,18 +230,18 @@ namespace Blitzkrieg
 
                     if (TorObject.TorAddress.StartsWith("http://"))
                     {
-                        fullUri = "http://" + 
-                            TorObject.TorUser + ":" + 
-                            TorObject.TorPass + "@" + 
-                            TorObject.TorAddress.Substring(7, TorObject.TorAddress.Length - 7) + ":" + 
+                        fullUri = "http://" +
+                            TorObject.TorUser + ":" +
+                            TorObject.TorPass + "@" +
+                            TorObject.TorAddress.Substring(7, TorObject.TorAddress.Length - 7) + ":" +
                             TorObject.TorPort + "/gui";
                     }
                     else if (TorObject.TorAddress.StartsWith("https://"))
                     {
-                        fullUri = "https://" + 
-                            TorObject.TorUser + ":" + 
-                            TorObject.TorPass + "@" + 
-                            TorObject.TorAddress.Substring(7, TorObject.TorAddress.Length - 7) + ":" + 
+                        fullUri = "https://" +
+                            TorObject.TorUser + ":" +
+                            TorObject.TorPass + "@" +
+                            TorObject.TorAddress.Substring(7, TorObject.TorAddress.Length - 7) + ":" +
                             TorObject.TorPort + "/gui";
                     }
 
@@ -274,6 +279,12 @@ namespace Blitzkrieg
                     this.btnTorEdit.Enabled = true;
 
                     dbController.LoadTorConfig(this);
+
+                    UpdateFeedTimer.Stop();
+                    UpdateFeedTimer.Dispose();
+                    UpdateFeedTimer = null;
+
+                    StartFeedUpdateTimer();
                 }
                 else
                 {
@@ -293,6 +304,76 @@ namespace Blitzkrieg
             }
         }
 
+        private void StartFeedUpdateTimer()
+        {
+            if (string.IsNullOrEmpty(TorObject.TorUpSeconds))
+                return;
+
+            if (dbController.CountFeeds() == 0)
+                return;
+
+            if (UpdateFeedTimer == null)
+            {
+                var time = TimeSpan.FromMinutes(double.Parse(TorObject.TorUpSeconds));
+                var totalTime = int.Parse(TorObject.TorUpSeconds) * 60;
+
+                UpdateFeedTimer = new Timer();
+                UpdateFeedTimer.Interval = (int)time.TotalMilliseconds;
+                UpdateFeedTimer.Tick += (sender, ev) =>
+                {
+                    totalTime = int.Parse(TorObject.TorUpSeconds) * 60;
+                    LoadDataGrid();
+                };
+                UpdateFeedTimer.Start();
+
+                RegressiveTimer = new Timer();
+                RegressiveTimer.Interval = 1000;
+                RegressiveTimer.Tick += (sender, ev) =>
+                {
+                    this.Invoke(new Action(() => 
+                    {
+                        this.lblTimerUpdate.Text = "Next Feed Update: " + totalTime + " seconds.";
+                        this.Update();
+                    }));
+                    totalTime--;
+                };
+                RegressiveTimer.Start();
+
+            }
+            else
+            {
+                UpdateFeedTimer.Stop();
+                UpdateFeedTimer.Start();
+            }
+        }
+
+        private void LoadDataGrid()
+        {
+            var thread = new System.Threading.Thread(() =>
+            {
+                ChangeNameStatus(" - Downlaoding Feed Updates...");
+                dbController.SaveFeedItems();
+
+                this.Invoke(new Action(() =>
+                {
+                    var data2 = dbController.LoadFeedItems();
+
+                    SortableBindingList<Post> sbl2 = new SortableBindingList<Post>(data2);
+                    this.RssItemGrid.DataSource = sbl2;
+
+                    ChangeNameStatus();
+
+                    this.Update();
+                }));
+
+            });
+
+            thread.IsBackground = true;
+            thread.Name = "Update Feeds";
+            thread.Start();
+
+        }
+
         public void EnableDisableControllers(object parentControl, bool enable)
         {
             var controls = parentControl.GetType().GetProperties().FirstOrDefault(p => p.Name == "Controls");
@@ -305,7 +386,7 @@ namespace Blitzkrieg
                 else
                     ((Control)item).Enabled = enable;
             }
-            
+
             this.Update();
         }
 
@@ -326,7 +407,6 @@ namespace Blitzkrieg
                 this.Update();
             }));
         }
-            
 
         private void btnAddDomain_Click(object sender, EventArgs e)
         {
@@ -352,8 +432,6 @@ namespace Blitzkrieg
         private void btnCheckAll_Click(object sender, EventArgs e)
         {
             //TODO: Check all RSS Filters.
-            var b = new Connection.DownloadFeed();
-            var a = b.DownloadFavicon("http://www.tokyotosho.info/rss.php?entries=450");
         }
 
         private void btnCheckNone_Click(object sender, EventArgs e)
@@ -368,7 +446,8 @@ namespace Blitzkrieg
 
         private void btnAddFilter_Click(object sender, EventArgs e)
         {
-            //TODO: Add RSS Filter. Create RSS Filter Engine.
+            //TODO: Create RSS Filter Engine.
+
         }
 
         private void frmMain_FormClosing(object sender, FormClosingEventArgs e)
@@ -405,6 +484,83 @@ namespace Blitzkrieg
             this.btnTorEdit.Enabled = false;
             this.btnTorEdit.Visible = false;
             this.btnTorSave.Enabled = true;
+        }
+
+        private void exitItemNotifyContextMenu_Click(object sender, EventArgs e)
+        {
+            ExitMenuItem_Click(sender, e);
+        }
+
+        /// <summary>
+        /// Feed Tree View Menu Strip - Edit Command
+        /// </summary>
+        /// <param name="sender">The Sender</param>
+        /// <param name="e">The Event Args</param>
+        private void editFeedToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            if (this.FeedsTree.SelectedNode.Name != "FeedsRoot")
+            {
+                frmAddFeed frm = new frmAddFeed(int.Parse(this.FeedsTree.SelectedNode.Name));
+                frm.FeedImageList = this.feedImageList;
+                frm.OnClosedForm += OnAddFeedFinished;
+                frm.ShowDialog(this);
+                frm.Dispose();
+                frm = null;
+            }
+        }
+
+        private void deleteFeedToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            if (this.FeedsTree.SelectedNode.Name != "FeedsRoot")
+            {
+                var msgb = MessageBox.Show(this, "Are you sure you want to delete this Feed?", NAME, MessageBoxButtons.OKCancel, MessageBoxIcon.Information);
+                if (msgb == DialogResult.OK)
+                {
+                    dbController.DeleteFeed(this, int.Parse(this.FeedsTree.SelectedNode.Name));
+                }
+            }
+        }
+
+        private void addFeedToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            btnAddFeed_Click(sender, e);
+        }
+
+        private void feedsContextMenu_Opening(object sender, System.ComponentModel.CancelEventArgs e)
+        {
+            if (this.FeedsTree.SelectedNode.Name == "FeedsRoot")
+            {
+                this.feedsContextMenu.Items["editFeedToolStripMenuItem"].Enabled = false;
+                this.feedsContextMenu.Items["deleteFeedToolStripMenuItem"].Enabled = false;
+            }
+            else
+            {
+                this.feedsContextMenu.Items["editFeedToolStripMenuItem"].Enabled = true;
+                this.feedsContextMenu.Items["deleteFeedToolStripMenuItem"].Enabled = true;
+            }
+        }
+
+        private void RssItemGrid_RowPostPaint(object sender, DataGridViewRowPostPaintEventArgs e)
+        {
+            if (!(sender is DataGridView))
+                return;
+
+            var dgv = (DataGridView)sender;
+            var data = dgv.DataSource;
+
+            var graphics = e.Graphics;
+            var icon = rssGridImageList.Images[1];
+
+            int xPosition = e.RowBounds.X;
+            int yPosition = e.RowBounds.Y + ((dgv.Rows[e.RowIndex].Height - icon.Height) / 2);
+
+            var rectangle = new System.Drawing.Rectangle(xPosition, yPosition, icon.Width, icon.Height);
+            graphics.DrawImage(icon, rectangle);
+        }
+
+        private void updateFeedsToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            this.LoadDataGrid();
         }
     }
 }

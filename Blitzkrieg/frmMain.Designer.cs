@@ -29,6 +29,7 @@
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle7 = new System.Windows.Forms.DataGridViewCellStyle();
             System.Windows.Forms.TreeNode treeNode1 = new System.Windows.Forms.TreeNode("Feeds");
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(frmMain));
             this.mainTabs = new System.Windows.Forms.TabControl();
@@ -37,18 +38,22 @@
             this.btnAddFeed = new System.Windows.Forms.Button();
             this.RssDataContainer = new System.Windows.Forms.SplitContainer();
             this.RssItemGrid = new System.Windows.Forms.DataGridView();
-            this.ItemName = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.Number = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.ItemSize = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.Done = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.btnAddFilter = new System.Windows.Forms.Button();
             this.btnDelFilter = new System.Windows.Forms.Button();
             this.btnCheckNone = new System.Windows.Forms.Button();
             this.btnCheckAll = new System.Windows.Forms.Button();
             this.RssFilterList = new System.Windows.Forms.CheckedListBox();
             this.FeedsTree = new System.Windows.Forms.TreeView();
+            this.feedsContextMenu = new System.Windows.Forms.ContextMenuStrip(this.components);
+            this.addFeedToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.editFeedToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.deleteFeedToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripSeparator2 = new System.Windows.Forms.ToolStripSeparator();
+            this.updateFeedsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.feedImageList = new System.Windows.Forms.ImageList(this.components);
             this.uTorTab = new System.Windows.Forms.TabPage();
             this.uTorGroup = new System.Windows.Forms.GroupBox();
+            this.btnTorEdit = new System.Windows.Forms.Button();
             this.chkStop100 = new System.Windows.Forms.CheckBox();
             this.chkForceDownload = new System.Windows.Forms.CheckBox();
             this.uTorRefrash = new System.Windows.Forms.GroupBox();
@@ -70,6 +75,7 @@
             this.txtUpSeconds = new System.Windows.Forms.TextBox();
             this.DnsTab = new System.Windows.Forms.TabPage();
             this.DDNSGroup = new System.Windows.Forms.GroupBox();
+            this.btnDnsEdit = new System.Windows.Forms.Button();
             this.UpdDnsFreq = new System.Windows.Forms.GroupBox();
             this.label14 = new System.Windows.Forms.Label();
             this.label15 = new System.Windows.Forms.Label();
@@ -96,12 +102,15 @@
             this.label7 = new System.Windows.Forms.Label();
             this.errorProvider = new System.Windows.Forms.ErrorProvider(this.components);
             this.notifyIcon = new System.Windows.Forms.NotifyIcon(this.components);
+            this.notifyContextMenu = new System.Windows.Forms.ContextMenuStrip(this.components);
+            this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
+            this.exitItemNotifyContextMenu = new System.Windows.Forms.ToolStripMenuItem();
             this.menuStrip = new System.Windows.Forms.MenuStrip();
             this.FileMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.ExitMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripContainer1 = new System.Windows.Forms.ToolStripContainer();
-            this.btnTorEdit = new System.Windows.Forms.Button();
-            this.btnDnsEdit = new System.Windows.Forms.Button();
+            this.rssGridImageList = new System.Windows.Forms.ImageList(this.components);
+            this.lblTimerUpdate = new System.Windows.Forms.Label();
             this.mainTabs.SuspendLayout();
             this.RssTab.SuspendLayout();
             this.RssGroup.SuspendLayout();
@@ -110,6 +119,7 @@
             this.RssDataContainer.Panel2.SuspendLayout();
             this.RssDataContainer.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.RssItemGrid)).BeginInit();
+            this.feedsContextMenu.SuspendLayout();
             this.uTorTab.SuspendLayout();
             this.uTorGroup.SuspendLayout();
             this.uTorRefrash.SuspendLayout();
@@ -119,6 +129,7 @@
             this.UpdDnsFreq.SuspendLayout();
             this.LogGroup.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.errorProvider)).BeginInit();
+            this.notifyContextMenu.SuspendLayout();
             this.menuStrip.SuspendLayout();
             this.toolStripContainer1.ContentPanel.SuspendLayout();
             this.toolStripContainer1.TopToolStripPanel.SuspendLayout();
@@ -189,6 +200,7 @@
             // 
             // RssDataContainer.Panel2
             // 
+            this.RssDataContainer.Panel2.Controls.Add(this.lblTimerUpdate);
             this.RssDataContainer.Panel2.Controls.Add(this.btnAddFilter);
             this.RssDataContainer.Panel2.Controls.Add(this.btnDelFilter);
             this.RssDataContainer.Panel2.Controls.Add(this.btnCheckNone);
@@ -203,43 +215,26 @@
             this.RssItemGrid.AllowUserToAddRows = false;
             this.RssItemGrid.AllowUserToDeleteRows = false;
             this.RssItemGrid.AllowUserToOrderColumns = true;
-            this.RssItemGrid.AutoSizeColumnsMode = System.Windows.Forms.DataGridViewAutoSizeColumnsMode.Fill;
+            this.RssItemGrid.AutoSizeColumnsMode = System.Windows.Forms.DataGridViewAutoSizeColumnsMode.AllCells;
             this.RssItemGrid.BackgroundColor = System.Drawing.SystemColors.Window;
-            this.RssItemGrid.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
-            this.ItemName,
-            this.Number,
-            this.ItemSize,
-            this.Done});
             this.RssItemGrid.Dock = System.Windows.Forms.DockStyle.Fill;
             this.RssItemGrid.Location = new System.Drawing.Point(0, 0);
             this.RssItemGrid.Name = "RssItemGrid";
             this.RssItemGrid.ReadOnly = true;
+            this.RssItemGrid.RowHeadersBorderStyle = System.Windows.Forms.DataGridViewHeaderBorderStyle.None;
+            dataGridViewCellStyle7.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle7.BackColor = System.Drawing.SystemColors.Window;
+            dataGridViewCellStyle7.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            dataGridViewCellStyle7.ForeColor = System.Drawing.SystemColors.WindowText;
+            dataGridViewCellStyle7.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+            dataGridViewCellStyle7.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle7.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
+            this.RssItemGrid.RowHeadersDefaultCellStyle = dataGridViewCellStyle7;
+            this.RssItemGrid.RowHeadersWidth = 20;
+            this.RssItemGrid.RowHeadersWidthSizeMode = System.Windows.Forms.DataGridViewRowHeadersWidthSizeMode.DisableResizing;
             this.RssItemGrid.Size = new System.Drawing.Size(659, 227);
             this.RssItemGrid.TabIndex = 0;
-            // 
-            // ItemName
-            // 
-            this.ItemName.HeaderText = "Name";
-            this.ItemName.Name = "ItemName";
-            this.ItemName.ReadOnly = true;
-            // 
-            // Number
-            // 
-            this.Number.HeaderText = "#";
-            this.Number.Name = "Number";
-            this.Number.ReadOnly = true;
-            // 
-            // ItemSize
-            // 
-            this.ItemSize.HeaderText = "Size";
-            this.ItemSize.Name = "ItemSize";
-            this.ItemSize.ReadOnly = true;
-            // 
-            // Done
-            // 
-            this.Done.HeaderText = "Done";
-            this.Done.Name = "Done";
-            this.Done.ReadOnly = true;
+            this.RssItemGrid.RowPostPaint += new System.Windows.Forms.DataGridViewRowPostPaintEventHandler(this.RssItemGrid_RowPostPaint);
             // 
             // btnAddFilter
             // 
@@ -300,6 +295,9 @@
             // 
             this.FeedsTree.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left)));
+            this.FeedsTree.ContextMenuStrip = this.feedsContextMenu;
+            this.FeedsTree.ImageIndex = 0;
+            this.FeedsTree.ImageList = this.feedImageList;
             this.FeedsTree.Location = new System.Drawing.Point(7, 19);
             this.FeedsTree.MinimumSize = new System.Drawing.Size(190, 4);
             this.FeedsTree.Name = "FeedsTree";
@@ -308,8 +306,60 @@
             treeNode1.Text = "Feeds";
             this.FeedsTree.Nodes.AddRange(new System.Windows.Forms.TreeNode[] {
             treeNode1});
+            this.FeedsTree.SelectedImageIndex = 0;
             this.FeedsTree.Size = new System.Drawing.Size(190, 432);
             this.FeedsTree.TabIndex = 2;
+            // 
+            // feedsContextMenu
+            // 
+            this.feedsContextMenu.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.addFeedToolStripMenuItem,
+            this.editFeedToolStripMenuItem,
+            this.deleteFeedToolStripMenuItem,
+            this.toolStripSeparator2,
+            this.updateFeedsToolStripMenuItem});
+            this.feedsContextMenu.Name = "feedsContextMenu";
+            this.feedsContextMenu.Size = new System.Drawing.Size(146, 98);
+            this.feedsContextMenu.Opening += new System.ComponentModel.CancelEventHandler(this.feedsContextMenu_Opening);
+            // 
+            // addFeedToolStripMenuItem
+            // 
+            this.addFeedToolStripMenuItem.Name = "addFeedToolStripMenuItem";
+            this.addFeedToolStripMenuItem.Size = new System.Drawing.Size(145, 22);
+            this.addFeedToolStripMenuItem.Text = "&Add Feed";
+            this.addFeedToolStripMenuItem.Click += new System.EventHandler(this.addFeedToolStripMenuItem_Click);
+            // 
+            // editFeedToolStripMenuItem
+            // 
+            this.editFeedToolStripMenuItem.Name = "editFeedToolStripMenuItem";
+            this.editFeedToolStripMenuItem.Size = new System.Drawing.Size(145, 22);
+            this.editFeedToolStripMenuItem.Text = "&Edit Feed";
+            this.editFeedToolStripMenuItem.Click += new System.EventHandler(this.editFeedToolStripMenuItem_Click);
+            // 
+            // deleteFeedToolStripMenuItem
+            // 
+            this.deleteFeedToolStripMenuItem.Name = "deleteFeedToolStripMenuItem";
+            this.deleteFeedToolStripMenuItem.Size = new System.Drawing.Size(145, 22);
+            this.deleteFeedToolStripMenuItem.Text = "&Delete Feed";
+            this.deleteFeedToolStripMenuItem.Click += new System.EventHandler(this.deleteFeedToolStripMenuItem_Click);
+            // 
+            // toolStripSeparator2
+            // 
+            this.toolStripSeparator2.Name = "toolStripSeparator2";
+            this.toolStripSeparator2.Size = new System.Drawing.Size(142, 6);
+            // 
+            // updateFeedsToolStripMenuItem
+            // 
+            this.updateFeedsToolStripMenuItem.Name = "updateFeedsToolStripMenuItem";
+            this.updateFeedsToolStripMenuItem.Size = new System.Drawing.Size(145, 22);
+            this.updateFeedsToolStripMenuItem.Text = "&Update Feeds";
+            this.updateFeedsToolStripMenuItem.Click += new System.EventHandler(this.updateFeedsToolStripMenuItem_Click);
+            // 
+            // feedImageList
+            // 
+            this.feedImageList.ImageStream = ((System.Windows.Forms.ImageListStreamer)(resources.GetObject("feedImageList.ImageStream")));
+            this.feedImageList.TransparentColor = System.Drawing.Color.Transparent;
+            this.feedImageList.Images.SetKeyName(0, "feedIcon.png");
             // 
             // uTorTab
             // 
@@ -345,6 +395,17 @@
             this.uTorGroup.TabIndex = 0;
             this.uTorGroup.TabStop = false;
             this.uTorGroup.Text = "uTorrent Web Configuration";
+            // 
+            // btnTorEdit
+            // 
+            this.btnTorEdit.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnTorEdit.Location = new System.Drawing.Point(703, 457);
+            this.btnTorEdit.Name = "btnTorEdit";
+            this.btnTorEdit.Size = new System.Drawing.Size(75, 23);
+            this.btnTorEdit.TabIndex = 13;
+            this.btnTorEdit.Text = "Edit";
+            this.btnTorEdit.UseVisualStyleBackColor = true;
+            this.btnTorEdit.Click += new System.EventHandler(this.btnTorEdit_Click);
             // 
             // chkStop100
             // 
@@ -556,6 +617,16 @@
             this.DDNSGroup.TabIndex = 0;
             this.DDNSGroup.TabStop = false;
             this.DDNSGroup.Text = "Dynamic DNS Client Configuration";
+            // 
+            // btnDnsEdit
+            // 
+            this.btnDnsEdit.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnDnsEdit.Location = new System.Drawing.Point(703, 460);
+            this.btnDnsEdit.Name = "btnDnsEdit";
+            this.btnDnsEdit.Size = new System.Drawing.Size(75, 23);
+            this.btnDnsEdit.TabIndex = 18;
+            this.btnDnsEdit.Text = "Edit";
+            this.btnDnsEdit.UseVisualStyleBackColor = true;
             // 
             // UpdDnsFreq
             // 
@@ -789,10 +860,31 @@
             // 
             // notifyIcon
             // 
+            this.notifyIcon.ContextMenuStrip = this.notifyContextMenu;
             this.notifyIcon.Icon = ((System.Drawing.Icon)(resources.GetObject("notifyIcon.Icon")));
             this.notifyIcon.Text = "Blitzkrieg";
             this.notifyIcon.Visible = true;
             this.notifyIcon.MouseDoubleClick += new System.Windows.Forms.MouseEventHandler(this.notifyIcon_MouseDoubleClick);
+            // 
+            // notifyContextMenu
+            // 
+            this.notifyContextMenu.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.toolStripSeparator1,
+            this.exitItemNotifyContextMenu});
+            this.notifyContextMenu.Name = "notifyContextMenu";
+            this.notifyContextMenu.Size = new System.Drawing.Size(93, 32);
+            // 
+            // toolStripSeparator1
+            // 
+            this.toolStripSeparator1.Name = "toolStripSeparator1";
+            this.toolStripSeparator1.Size = new System.Drawing.Size(89, 6);
+            // 
+            // exitItemNotifyContextMenu
+            // 
+            this.exitItemNotifyContextMenu.Name = "exitItemNotifyContextMenu";
+            this.exitItemNotifyContextMenu.Size = new System.Drawing.Size(92, 22);
+            this.exitItemNotifyContextMenu.Text = "&Exit";
+            this.exitItemNotifyContextMenu.Click += new System.EventHandler(this.exitItemNotifyContextMenu_Click);
             // 
             // menuStrip
             // 
@@ -816,7 +908,7 @@
             // ExitMenuItem
             // 
             this.ExitMenuItem.Name = "ExitMenuItem";
-            this.ExitMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.ExitMenuItem.Size = new System.Drawing.Size(92, 22);
             this.ExitMenuItem.Text = "&Exit";
             this.ExitMenuItem.Click += new System.EventHandler(this.ExitMenuItem_Click);
             // 
@@ -839,26 +931,22 @@
             // 
             this.toolStripContainer1.TopToolStripPanel.Controls.Add(this.menuStrip);
             // 
-            // btnTorEdit
+            // rssGridImageList
             // 
-            this.btnTorEdit.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnTorEdit.Location = new System.Drawing.Point(703, 457);
-            this.btnTorEdit.Name = "btnTorEdit";
-            this.btnTorEdit.Size = new System.Drawing.Size(75, 23);
-            this.btnTorEdit.TabIndex = 13;
-            this.btnTorEdit.Text = "Edit";
-            this.btnTorEdit.UseVisualStyleBackColor = true;
-            this.btnTorEdit.Click += new System.EventHandler(this.btnTorEdit_Click);
+            this.rssGridImageList.ImageStream = ((System.Windows.Forms.ImageListStreamer)(resources.GetObject("rssGridImageList.ImageStream")));
+            this.rssGridImageList.TransparentColor = System.Drawing.Color.Transparent;
+            this.rssGridImageList.Images.SetKeyName(0, "checked.png");
+            this.rssGridImageList.Images.SetKeyName(1, "pending.png");
             // 
-            // btnDnsEdit
+            // lblTimerUpdate
             // 
-            this.btnDnsEdit.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnDnsEdit.Location = new System.Drawing.Point(703, 460);
-            this.btnDnsEdit.Name = "btnDnsEdit";
-            this.btnDnsEdit.Size = new System.Drawing.Size(75, 23);
-            this.btnDnsEdit.TabIndex = 18;
-            this.btnDnsEdit.Text = "Edit";
-            this.btnDnsEdit.UseVisualStyleBackColor = true;
+            this.lblTimerUpdate.Anchor = System.Windows.Forms.AnchorStyles.Bottom;
+            this.lblTimerUpdate.AutoSize = true;
+            this.lblTimerUpdate.Location = new System.Drawing.Point(248, 212);
+            this.lblTimerUpdate.Name = "lblTimerUpdate";
+            this.lblTimerUpdate.Size = new System.Drawing.Size(158, 13);
+            this.lblTimerUpdate.TabIndex = 3;
+            this.lblTimerUpdate.Text = "Next Feed Update: 60 seconds.";
             // 
             // frmMain
             // 
@@ -870,6 +958,7 @@
             this.MainMenuStrip = this.menuStrip;
             this.MinimumSize = new System.Drawing.Size(900, 580);
             this.Name = "frmMain";
+            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "Blitzkrieg";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.frmMain_FormClosing);
             this.Load += new System.EventHandler(this.OnLoad);
@@ -878,9 +967,11 @@
             this.RssGroup.ResumeLayout(false);
             this.RssDataContainer.Panel1.ResumeLayout(false);
             this.RssDataContainer.Panel2.ResumeLayout(false);
+            this.RssDataContainer.Panel2.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.RssDataContainer)).EndInit();
             this.RssDataContainer.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.RssItemGrid)).EndInit();
+            this.feedsContextMenu.ResumeLayout(false);
             this.uTorTab.ResumeLayout(false);
             this.uTorGroup.ResumeLayout(false);
             this.uTorGroup.PerformLayout();
@@ -895,6 +986,7 @@
             this.UpdDnsFreq.PerformLayout();
             this.LogGroup.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.errorProvider)).EndInit();
+            this.notifyContextMenu.ResumeLayout(false);
             this.menuStrip.ResumeLayout(false);
             this.menuStrip.PerformLayout();
             this.toolStripContainer1.ContentPanel.ResumeLayout(false);
@@ -923,10 +1015,6 @@
         private System.Windows.Forms.Button btnCheckNone;
         private System.Windows.Forms.Button btnCheckAll;
         private System.Windows.Forms.DataGridView RssItemGrid;
-        private System.Windows.Forms.DataGridViewTextBoxColumn ItemName;
-        private System.Windows.Forms.DataGridViewTextBoxColumn Number;
-        private System.Windows.Forms.DataGridViewTextBoxColumn ItemSize;
-        private System.Windows.Forms.DataGridViewTextBoxColumn Done;
         private System.Windows.Forms.GroupBox UpdFreqGroup;
         private System.Windows.Forms.TextBox txtPass;
         private System.Windows.Forms.TextBox txtUser;
@@ -979,6 +1067,18 @@
         private System.Windows.Forms.ToolStripMenuItem ExitMenuItem;
         private System.Windows.Forms.Button btnDnsEdit;
         public System.Windows.Forms.Button btnTorEdit;
+        private System.Windows.Forms.ContextMenuStrip notifyContextMenu;
+        private System.Windows.Forms.ToolStripSeparator toolStripSeparator1;
+        private System.Windows.Forms.ToolStripMenuItem exitItemNotifyContextMenu;
+        private System.Windows.Forms.ContextMenuStrip feedsContextMenu;
+        private System.Windows.Forms.ToolStripMenuItem addFeedToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem editFeedToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem deleteFeedToolStripMenuItem;
+        private System.Windows.Forms.ToolStripSeparator toolStripSeparator2;
+        private System.Windows.Forms.ToolStripMenuItem updateFeedsToolStripMenuItem;
+        public System.Windows.Forms.ImageList feedImageList;
+        private System.Windows.Forms.ImageList rssGridImageList;
+        private System.Windows.Forms.Label lblTimerUpdate;
     }
 }
 

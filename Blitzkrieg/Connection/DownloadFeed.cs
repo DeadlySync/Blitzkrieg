@@ -6,12 +6,13 @@ using System.Net;
 using System.Xml;
 using System.Text;
 using HtmlAgilityPack;
+using System.Text.RegularExpressions;
 
 namespace Blitzkrieg.Connection
 {
     public class DownloadFeed
     {
-        public XmlReader DownloadFeedFromUrl(string uri)
+        public string DownloadFeedFromUrl(string uri)
         {
             try
             {
@@ -25,10 +26,10 @@ namespace Blitzkrieg.Connection
                 var resp = req.GetResponse();
                 var stream = DeflateGZipStream(resp.GetResponseStream());
 
-                var xmlSettings = new XmlReaderSettings();
-                xmlSettings.DtdProcessing = DtdProcessing.Parse;
-                
-                return XmlReader.Create(stream, xmlSettings);
+                var data = new StreamReader(stream, Encoding.UTF8);
+                var text = Regex.Replace(data.ReadToEnd(), "&(?!amp;)", "&amp;");
+
+                return text;
             }
             catch (Exception ex)
             {
@@ -46,7 +47,7 @@ namespace Blitzkrieg.Connection
         {
             var type = uri.Substring(0, uri.IndexOf("//") + 2);
             var newUri = uri.Substring(uri.IndexOf("//") + 2);
-                newUri = newUri.Substring(0, newUri.IndexOf("/"));
+                newUri = newUri.Substring(0, newUri.IndexOf("/")) + "/";
 
             HtmlWeb hw = new HtmlWeb();
             HtmlDocument doc = hw.Load(type + newUri);
@@ -58,7 +59,11 @@ namespace Blitzkrieg.Connection
                     if(favicon != null)
                     {
                         var client = new WebClient();
-                        return Convert.ToBase64String(client.DownloadData(favicon));
+
+                        if (favicon.Contains("http"))
+                            return Convert.ToBase64String(client.DownloadData(favicon));
+                        else
+                            return Convert.ToBase64String(client.DownloadData(type + newUri + favicon));
                     }
                 }
             }

@@ -17,7 +17,6 @@ namespace Blitzkrieg.DataBase
         public long Id { get; set; }
         public string Title { get; set; }
         public string Link { get; set; }
-        public string Description { get; set; }
         public string PublishDate { get; set; }
         public string Magnet { get; set; }
         public string FromFeed { get; set; }

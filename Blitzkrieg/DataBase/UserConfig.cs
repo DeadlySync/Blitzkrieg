@@ -19,8 +19,8 @@ namespace Blitzkrieg.DataBase
         public Nullable<long> ScreenHeight { get; set; }
         public Nullable<bool> IsMaximized { get; set; }
         public Nullable<long> RssFeedTreeWidth { get; set; }
+        public string Password { get; set; }
         public System.DateTime DateAdd { get; set; }
         public Nullable<System.DateTime> DateUpdate { get; set; }
-        public string Password { get; set; }
     }
 }

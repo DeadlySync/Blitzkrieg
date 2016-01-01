@@ -1,4 +1,5 @@
-﻿using Blitzkrieg.Controllers;
+﻿using Blitzkrieg.Connection;
+using Blitzkrieg.Controllers;
 using Blitzkrieg.DataBase;
 using System;
 using System.Windows.Forms;
@@ -8,21 +9,28 @@ namespace Blitzkrieg.Views
     public partial class frmAddFeed : Form
     {
         private DatabaseController dbController = null;
+        private DownloadFeed feedDownloader = null;
 
         public EventHandler OnClosedForm;
 
+        public ImageList FeedImageList { get; set; }
+        public int FeedIndex { get; private set; }
         public string FeedAlias { get; private set; }
         public string FeedAddress { get; private set; }
         public int FeedPriority { get; set; }
         public bool IsActive { get; private set; }
+        public string FeedIcon { get; private set; }
+        public RssFeedObject RssObject { get; set; }
 
         public frmAddFeed()
         {
+            FeedIndex = -1;
             InitializeComponent();
         }
 
-        public frmAddFeed(string FeedName)
+        public frmAddFeed(int indexFeed)
         {
+            FeedIndex = indexFeed;
             InitializeComponent();
         }
 
@@ -54,6 +62,12 @@ namespace Blitzkrieg.Views
 
             try
             {
+                if (string.IsNullOrEmpty(this.FeedIcon))
+                {
+                    feedDownloader = new DownloadFeed();
+                    this.FeedIcon = feedDownloader.DownloadFavicon(FeedAddress);
+                }
+
                 dbController = new DatabaseController();
                 dbController.SaveFeeds(this);
             }
@@ -72,23 +86,35 @@ namespace Blitzkrieg.Views
                 OnClosedForm(sender, null);
         }
 
-        private void frmAddFeed_Load(object sender, EventArgs e)
+        private void OnLoad(object sender, EventArgs e)
         {
+            this.txtAddress.Enabled = true;
+
+            RssObject = new RssFeedObject();
             dbController = new DatabaseController();
 
             int countFeed = dbController.CountFeeds();
-
             if (countFeed == 0)
                 this.cboPriority.Items.Add(1);
             else
             {
                 for (int i = 0; i <= countFeed; i++)
-                {
                     this.cboPriority.Items.Add(i + 1);
-                }
+            }
+            this.cboPriority.SelectedIndex = this.cboPriority.Items.Count - 1;
+
+            if (FeedIndex > -1)
+            {
+                dbController.LoadSingleFeed(this, FeedIndex);
+                this.txtAddress.Enabled = false;
             }
 
-            this.cboPriority.SelectedIndex = this.cboPriority.Items.Count - 1;
+            //Rss Feed DataBind
+            this.txtAddress.DataBindings.Add(new Binding("Text", RssObject, "RssAddress"));
+            this.txtAlias.DataBindings.Add(new Binding("Text", RssObject, "RssAlias"));
+            this.chkIsActive.DataBindings.Add(new Binding("Checked", RssObject, "RssActive"));
+            this.cboPriority.DataBindings.Add(new Binding("SelectedIndex", RssObject, "RssPriority"));
+            this.FeedIcon = RssObject.RssFeedIcon;
         }
     }
 }

@@ -18,8 +18,9 @@ namespace Blitzkrieg.DataBase
         public string FeedUrl { get; set; }
         public string FeedAlias { get; set; }
         public Nullable<bool> IsActive { get; set; }
+        public Nullable<long> FeedPriority { get; set; }
+        public string FeedIcon { get; set; }
         public System.DateTime DateAdd { get; set; }
         public Nullable<System.DateTime> DateUpdate { get; set; }
-        public Nullable<long> FeedPriority { get; set; }
     }
 }
