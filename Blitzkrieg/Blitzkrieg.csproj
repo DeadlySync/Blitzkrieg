@@ -263,6 +263,7 @@
     <Content Include="Resources\blitzkrieg.ico" />
     <Content Include="Resources\checked.png" />
     <Content Include="Resources\feedIcon.png" />
+    <Content Include="Resources\pending.png" />
   </ItemGroup>
   <ItemGroup>
     <PublishFile Include="blitzkrieg.ico">
